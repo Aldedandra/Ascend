@@ -156,6 +156,13 @@ small { color: var(--muted); }
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   cursor: pointer; font-weight: 750;
 }
+
+.primary-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
 .primary-button { background: linear-gradient(135deg, #4f8cff, #3976e3); color: white; box-shadow: 0 12px 28px rgba(79,140,255,.23); }
 .secondary-button { background: rgba(79,140,255,.12); color: var(--text); border: 1px solid rgba(79,140,255,.2); }
 .complete-button { background: rgba(69,214,199,.1); color: #8ce8dc; border: 1px solid rgba(69,214,199,.2); }
@@ -263,8 +270,43 @@ small { color: var(--muted); }
 .quiz-list { display: grid; gap: 22px; margin-bottom: 20px; }
 .quiz-list fieldset { border: 0; padding: 0; margin: 0; }
 .quiz-list legend { font-weight: 750; margin-bottom: 11px; }
-.choice-row { display: flex; gap: 10px; padding: 10px 12px; margin: 7px 0; border-radius: 10px; background: rgba(255,255,255,.025); color: var(--muted); cursor: pointer; }
-.choice-row:has(input:checked) { border: 1px solid rgba(79,140,255,.28); background: rgba(79,140,255,.08); color: var(--text); }
+.choice-row {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  margin: 8px 0;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.choice-row input {
+  width: 16px;
+  height: 16px;
+  margin: 3px 0 0;
+  accent-color: var(--accent);
+}
+
+.choice-row span {
+  min-width: 0;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.choice-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.choice-row:has(input:checked) {
+  border-color: rgba(79, 140, 255, 0.35);
+  background: rgba(79, 140, 255, 0.1);
+  color: var(--text);
+}
 .result-banner { margin-top: 14px; padding: 12px 14px; border-radius: 11px; background: rgba(69,214,199,.11); color: #95eee3; }
 .reflection-question { font-size: 1.15rem; color: var(--text); }
 

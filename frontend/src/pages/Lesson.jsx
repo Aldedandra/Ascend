@@ -56,7 +56,15 @@ export default function Lesson() {
   };
 
   const submitQuiz = async () => {
+    if (answers.some((answer) => answer === -1)) {
+      setError("Please answer every question before submitting the quiz.");
+      return;
+    }
+
     try {
+      setError("");
+      setQuizResult(null);
+
       const result = await api.submitQuiz(lesson.id, answers);
       setQuizResult(result);
     } catch (err) {
@@ -64,7 +72,9 @@ export default function Lesson() {
     }
   };
 
-  if (error) return <div className="error-card">{error}</div>;
+if (error && !lesson) {
+  return <div className="error-card">{error}</div>;
+}
   if (!lesson) return <div className="loading-card">Loading lesson...</div>;
 
   return (
@@ -93,12 +103,21 @@ export default function Lesson() {
           <button
             key={tab.id}
             className={activeTab === tab.id ? "active" : ""}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => {
+  setActiveTab(tab.id);
+  setError("");
+}}
           >
             {tab.label}
           </button>
         ))}
       </div>
+
+      {error && (
+  <div className="error-card">
+    {error}
+  </div>
+)}
 
       {activeTab === "lesson" && (
         <section className="panel lesson-content">
@@ -170,12 +189,27 @@ export default function Lesson() {
               </fieldset>
             ))}
           </div>
-          <button className="primary-button" onClick={submitQuiz}>Submit quiz</button>
-          {quizResult && (
-            <div className="result-banner">
-              Score: {quizResult.score}/{quizResult.total}
-            </div>
-          )}
+
+          <button
+            className="primary-button"
+            onClick={submitQuiz}
+            disabled={answers.some((answer) => answer === -1)}>
+            Submit quiz
+          </button>
+
+{quizResult && (
+  <div className="result-banner">
+    <strong>
+      Score: {quizResult.score}/{quizResult.total}
+    </strong>
+
+    <div>
+      {quizResult.score === quizResult.total
+        ? "Excellent work. You answered every question correctly."
+        : "Review the lesson and try the quiz again when you are ready."}
+    </div>
+  </div>
+)}
         </section>
       )}
 
