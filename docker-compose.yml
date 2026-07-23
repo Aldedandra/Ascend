@@ -1,0 +1,32 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: journey-backend
+    restart: unless-stopped
+    environment:
+      JOURNEY_DB_PATH: /data/journey.db
+      CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+    volumes:
+      - journey_data:/data
+    networks:
+      - journey_net
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: journey-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3001:80"
+    networks:
+      - journey_net
+
+volumes:
+  journey_data:
+
+networks:
+  journey_net:
+    driver: bridge
