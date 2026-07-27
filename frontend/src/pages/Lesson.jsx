@@ -132,7 +132,7 @@ export default function Lesson() {
     }
 
     return (
-      `I am working through The Journey, lesson ${lesson.id}: ` +
+      `I am working through Ascend, lesson ${lesson.id}: ` +
       `${lesson.title}. Please continue coaching me from this lesson. ` +
       "Ask me questions, review my reasoning, and do not skip the lab, " +
       "quiz, reflection, or portfolio update."

@@ -32,7 +32,7 @@ export default function Portfolio() {
         <span className="eyebrow">CAPSTONE STORY</span>
         <h2>From working application to production-style platform</h2>
         <p>
-          The Journey Hub itself becomes the capstone: versioned with Git, containerized,
+          Ascend itself becomes the capstone: versioned with Git, containerized,
           deployed, automated, monitored, secured, documented, broken intentionally, and recovered.
         </p>
       </section>
