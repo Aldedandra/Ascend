@@ -7,9 +7,18 @@ export default function Journal() {
   const [form, setForm] = useState({ title: "", body: "" });
   const [error, setError] = useState("");
 
-  const load = () => api.getJournal().then(setEntries).catch((err) => setError(err.message));
+const load = async () => {
+  try {
+    const data = await api.getJournal();
+    setEntries(data);
+  } catch (err) {
+    setError(err.message);
+  }
+};
 
-  useEffect(load, []);
+useEffect(() => {
+  load();
+}, []);
 
   const submit = async (event) => {
     event.preventDefault();
