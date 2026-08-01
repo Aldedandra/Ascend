@@ -59,15 +59,6 @@ export default function Dashboard() {
           <p>
             Every lesson, lab, workshop, and reflection is another step toward the engineer you are becoming.
           </p>
-          {currentLesson && (
-            <div className="hero-actions">
-              <Link className="primary-button" to={`/lessons/${currentLesson.id}`}>
-                <Play size={18} />
-                Continue learning
-              </Link>
-              <Link className="secondary-button" to="/modules">View journey</Link>
-            </div>
-          )}
         </div>
         <div className="mountain-visual" aria-hidden="true">
           <div className="altitude-line altitude-one" />
@@ -76,6 +67,18 @@ export default function Dashboard() {
           <AscendLogo />
           <span>{progress.percent}% ASCENDED</span>
         </div>
+
+        {currentLesson && (
+          <div className="hero-actions">
+            <Link className="primary-button" to={`/lessons/${currentLesson.id}`}>
+              <Play size={18} />
+              Continue learning
+            </Link>
+            <Link className="secondary-button" to="/modules">
+              View journey
+            </Link>
+          </div>
+        )}
       </section>
 
       <section className="stats-grid">
