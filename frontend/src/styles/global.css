@@ -588,6 +588,7 @@ body {
   .topbar-copy strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 74vw; }
 }
 
+<<<<<<< HEAD
 /* iPhone Home Screen safe-area support */
 @supports (padding: env(safe-area-inset-top)) {
   .topbar {
@@ -607,3 +608,290 @@ body,
   min-height: 100vh;
   min-height: 100dvh;
 }
+=======
+/* =========================================================
+   Ascend Mobile UI v1.1
+   Native iPhone and iPad dashboard refinement
+   ========================================================= */
+
+.ascend-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(230px, 330px);
+  grid-template-areas:
+    "copy visual"
+    "actions visual";
+  column-gap: clamp(24px, 4vw, 54px);
+  row-gap: 24px;
+}
+
+.ascend-hero .hero-copy {
+  grid-area: copy;
+  align-self: end;
+}
+
+.ascend-hero .mountain-visual {
+  grid-area: visual;
+  align-self: center;
+  justify-self: end;
+}
+
+.ascend-hero .hero-actions {
+  grid-area: actions;
+  align-self: start;
+  margin-top: 0;
+}
+
+@supports (padding-top: env(safe-area-inset-top)) {
+  .topbar {
+    padding-top: env(safe-area-inset-top);
+    min-height: calc(74px + env(safe-area-inset-top));
+  }
+
+  .main-content {
+    padding-bottom: calc(34px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 820px) {
+  .topbar {
+    min-height: 66px;
+    gap: 14px;
+    padding-inline: 16px;
+  }
+
+  .menu-button {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 auto;
+    border-radius: 13px;
+  }
+
+  .topbar-copy {
+    flex: 1;
+  }
+
+  .topbar-copy .eyebrow {
+    margin-bottom: 4px;
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+  }
+
+  .topbar-copy strong {
+    font-size: 0.84rem;
+    line-height: 1.35;
+  }
+
+  .main-content {
+    padding: 20px 16px 36px;
+  }
+
+  .page-stack {
+    gap: 18px;
+  }
+
+  .ascend-hero {
+    min-height: 0;
+    padding: 28px 22px 24px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "copy"
+      "visual"
+      "actions";
+    row-gap: 20px;
+  }
+
+  .ascend-hero .hero-copy {
+    align-self: auto;
+  }
+
+  .ascend-hero h1 {
+    font-size: clamp(2.65rem, 12vw, 4rem);
+    line-height: 0.98;
+    margin-bottom: 16px;
+    letter-spacing: -0.055em;
+  }
+
+  .ascend-hero .hero-copy p {
+    max-width: none;
+    margin-bottom: 0;
+    font-size: 0.98rem;
+    line-height: 1.6;
+  }
+
+  .ascend-hero .mountain-visual {
+    width: 156px;
+    min-width: 0;
+    margin: 0 auto;
+    justify-self: center;
+  }
+
+  .mountain-visual svg {
+    width: 78%;
+  }
+
+  .mountain-visual > span {
+    bottom: 0;
+    font-size: 0.62rem;
+  }
+
+  .ascend-hero .hero-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    gap: 10px;
+  }
+
+  .ascend-hero .hero-actions > * {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .stat-card {
+    min-height: 112px;
+    padding: 16px;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    flex: 0 0 auto;
+  }
+
+  .stat-card span {
+    font-size: 0.76rem;
+  }
+
+  .stat-card strong {
+    font-size: 1.32rem;
+    margin: 2px 0;
+  }
+
+  .stat-card small {
+    line-height: 1.35;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .platform-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .platform-card {
+    min-height: 168px;
+  }
+}
+
+@media (max-width: 560px) {
+  .topbar {
+    padding-inline: 14px;
+  }
+
+  .topbar-copy strong {
+    max-width: none;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    font-size: 0.78rem;
+  }
+
+  .main-content {
+    padding: 14px 14px 30px;
+  }
+
+  .ascend-hero {
+    padding: 24px 20px 22px;
+    border-radius: 20px;
+    row-gap: 18px;
+  }
+
+  .ascend-hero h1 {
+    font-size: clamp(2.55rem, 13vw, 3.35rem);
+  }
+
+  .ascend-hero .hero-copy p {
+    font-size: 0.96rem;
+  }
+
+  .ascend-hero .mountain-visual {
+    width: 142px;
+  }
+
+  .ascend-hero .hero-actions {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+
+  .primary-button,
+  .secondary-button {
+    padding-inline: 13px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stat-card {
+    min-height: 104px;
+    padding: 14px;
+  }
+
+  .stat-card strong {
+    font-size: 1.24rem;
+  }
+
+  .panel {
+    padding: 18px;
+  }
+
+  .platform-grid,
+  .feature-preview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .platform-card {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 390px) {
+  .topbar-copy strong {
+    font-size: 0.72rem;
+  }
+
+  .ascend-hero .hero-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    min-height: 92px;
+  }
+}
+
+@media (min-width: 821px) and (max-width: 1180px) {
+  .ascend-hero {
+    grid-template-columns: minmax(0, 1fr) 250px;
+  }
+
+  .ascend-hero h1 {
+    font-size: clamp(3.2rem, 6vw, 4.5rem);
+  }
+
+  .mountain-visual {
+    width: 250px;
+    min-width: 0;
+  }
+}
+>>>>>>> aecad755b92c911c48ed5780e5cff424af9b0614
