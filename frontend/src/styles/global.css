@@ -587,3 +587,23 @@ body {
   .hero-actions > * { width: 100%; }
   .topbar-copy strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 74vw; }
 }
+
+/* iPhone Home Screen safe-area support */
+@supports (padding: env(safe-area-inset-top)) {
+  .topbar {
+    min-height: calc(74px + env(safe-area-inset-top));
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .sidebar {
+    padding-top: calc(22px + env(safe-area-inset-top));
+    padding-bottom: calc(22px + env(safe-area-inset-bottom));
+  }
+}
+
+body,
+.app-shell,
+.main-column {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
