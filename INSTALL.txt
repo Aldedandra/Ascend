@@ -1,0 +1,41 @@
+ASCEND WORKSHOP — PHASE 1
+
+REPLACE:
+- frontend/src/App.jsx
+- frontend/src/components/Layout.jsx
+- frontend/src/main.jsx
+
+ADD:
+- frontend/src/components/WorkspaceSwitcher.jsx
+- frontend/src/pages/workshop/WorkshopDashboard.jsx
+- frontend/src/pages/workshop/WorkshopSessions.jsx
+- frontend/src/pages/workshop/WorkshopLabs.jsx
+- frontend/src/pages/workshop/WorkshopHandbook.jsx
+- frontend/src/pages/workshop/WorkshopQuestions.jsx
+- frontend/src/styles/workshop.css
+
+After copying the files:
+
+Docker:
+  docker compose up -d --build
+  docker compose ps
+
+Browser checks:
+  /
+  /modules
+  /workshop
+  /workshop/sessions
+  /workshop/labs
+  /workshop/handbook
+  /workshop/questions
+
+Capacitor / Xcode:
+  cd frontend
+  npm install
+  npm run build
+  npx cap sync ios
+  npx cap open ios
+
+Suggested commit:
+  git add frontend/src
+  git commit -m "feat: add DevOps Workshop workspace foundation"

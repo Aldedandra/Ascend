@@ -1,9 +1,12 @@
 import {
   Award,
   BookOpen,
+  BookOpenCheck,
+  CalendarDays,
   FlaskConical,
   Gauge,
   Menu,
+  MessageCircleQuestion,
   NotebookPen,
   Presentation,
   Route,
@@ -11,18 +14,16 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import AscendLogo from "./AscendLogo";
+import WorkspaceSwitcher from "./WorkspaceSwitcher";
 
-const navGroups = [
+const curriculumGroups = [
   {
     label: "Climb",
     items: [
       { to: "/", label: "Dashboard", icon: Gauge },
       { to: "/modules", label: "Journey", icon: BookOpen },
-      { to: "/workshop", label: "Workshop", icon: Presentation },
-      { to: "/labs", label: "Labs", icon: FlaskConical },
-      { to: "/handbook", label: "Handbook", icon: ScrollText },
     ],
   },
   {
@@ -35,19 +36,69 @@ const navGroups = [
   },
 ];
 
+const workshopGroups = [
+  {
+    label: "Workshop",
+    items: [
+      { to: "/workshop", label: "Workshop Home", icon: Presentation },
+      { to: "/workshop/sessions", label: "Sessions", icon: CalendarDays },
+      { to: "/workshop/labs", label: "Labs", icon: FlaskConical },
+      { to: "/workshop/handbook", label: "Handbook", icon: BookOpenCheck },
+      {
+        to: "/workshop/questions",
+        label: "Questions for Travis",
+        icon: MessageCircleQuestion,
+      },
+    ],
+  },
+];
+
 export default function Layout() {
+  const location = useLocation();
   const [open, setOpen] = useState(false);
+
+  const isWorkshop = location.pathname.startsWith("/workshop");
+  const navGroups = isWorkshop ? workshopGroups : curriculumGroups;
+
+  const topbar = isWorkshop
+    ? {
+        eyebrow: "DEVOPS WORKSHOP",
+        message: "Capture the lesson. Practice the work. Bring better questions.",
+        badge: "WORKSHOP",
+      }
+    : {
+        eyebrow: "YOUR DEVOPS ASCENT",
+        message: "Learn it. Build it. Explain it. Keep climbing.",
+        badge: "ASCEND",
+      };
+
+  const mission = isWorkshop
+    ? {
+        eyebrow: "Workshop principle",
+        title: "Turn every conversation into practical growth.",
+        body: "Capture the why, practice the commands, and return with better questions.",
+      }
+    : {
+        eyebrow: "Ascend principle",
+        title: "Every lesson is another step upward.",
+        body: "Progress does not require perfection. It requires the next step.",
+      };
 
   return (
     <div className="app-shell">
       <aside className={`sidebar ${open ? "sidebar-open" : ""}`}>
         <div className="brand">
-          <div className="brand-mark"><AscendLogo compact /></div>
-          <div className="brand-copy">
-            <strong>ASCEND</strong>
-            <span>Keep Climbing.</span>
+          <div className="brand-mark">
+            <AscendLogo compact />
           </div>
-          <button className="icon-button sidebar-close" onClick={() => setOpen(false)} aria-label="Close navigation">
+
+          <WorkspaceSwitcher onNavigate={() => setOpen(false)} />
+
+          <button
+            className="icon-button sidebar-close"
+            onClick={() => setOpen(false)}
+            aria-label="Close navigation"
+          >
             <X size={20} />
           </button>
         </div>
@@ -56,13 +107,16 @@ export default function Layout() {
           {navGroups.map((group) => (
             <div className="nav-group" key={group.label}>
               <span className="nav-group-label">{group.label}</span>
+
               {group.items.map(({ to, label, icon: Icon }) => (
                 <NavLink
                   key={to}
                   to={to}
-                  end={to === "/"}
+                  end={to === "/" || to === "/workshop"}
                   onClick={() => setOpen(false)}
-                  className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                  className={({ isActive }) =>
+                    `nav-link ${isActive ? "active" : ""}`
+                  }
                 >
                   <Icon size={19} />
                   <span>{label}</span>
@@ -73,28 +127,42 @@ export default function Layout() {
         </nav>
 
         <div className="mission-card">
-          <span>Ascend principle</span>
-          <strong>Every lesson is another step upward.</strong>
-          <p>Progress does not require perfection. It requires the next step.</p>
+          <span>{mission.eyebrow}</span>
+          <strong>{mission.title}</strong>
+          <p>{mission.body}</p>
         </div>
       </aside>
 
       <div className="main-column">
         <header className="topbar">
-          <button className="icon-button menu-button" onClick={() => setOpen(true)} aria-label="Open navigation">
+          <button
+            className="icon-button menu-button"
+            onClick={() => setOpen(true)}
+            aria-label="Open navigation"
+          >
             <Menu size={22} />
           </button>
+
           <div className="topbar-copy">
-            <span className="eyebrow">YOUR DEVOPS ASCENT</span>
-            <strong>Learn it. Build it. Explain it. Keep climbing.</strong>
+            <span className="eyebrow">{topbar.eyebrow}</span>
+            <strong>{topbar.message}</strong>
           </div>
-          <div className="topbar-badge">ASCEND</div>
+
+          <div className="topbar-badge">{topbar.badge}</div>
         </header>
+
         <main className="main-content">
           <Outlet />
         </main>
       </div>
-      {open && <button className="sidebar-overlay" onClick={() => setOpen(false)} aria-label="Close navigation" />}
+
+      {open && (
+        <button
+          className="sidebar-overlay"
+          onClick={() => setOpen(false)}
+          aria-label="Close navigation"
+        />
+      )}
     </div>
   );
 }

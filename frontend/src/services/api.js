@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://100.73.37.48:8000";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
 const request = async (path, options = {}) => {
   const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -10,7 +10,10 @@ const request = async (path, options = {}) => {
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: "Request failed" }));
+    const error = await response
+      .json()
+      .catch(() => ({ detail: "Request failed" }));
+
     throw new Error(error.detail || "Request failed");
   }
 
@@ -19,24 +22,36 @@ const request = async (path, options = {}) => {
 
 export const api = {
   getModules: () => request("/api/modules"),
-  getLesson: (lessonId) => request(`/api/lessons/${lessonId}`),
-  getProgress: () => request("/api/progress"),
+
+  getLesson: (lessonId) =>
+    request(`/api/lessons/${lessonId}`),
+
+  getProgress: () =>
+    request("/api/progress"),
+
   setLessonComplete: (lessonId, completed) =>
     request(`/api/progress/${lessonId}`, {
       method: "PUT",
       body: JSON.stringify({ completed }),
     }),
+
   submitQuiz: (lessonId, answers) =>
     request(`/api/quizzes/${lessonId}`, {
       method: "POST",
       body: JSON.stringify({ answers }),
     }),
-  getJournal: () => request("/api/journal"),
+
+  getJournal: () =>
+    request("/api/journal"),
+
   createJournal: (entry) =>
     request("/api/journal", {
       method: "POST",
       body: JSON.stringify(entry),
     }),
+
   deleteJournal: (entryId) =>
-    request(`/api/journal/${entryId}`, { method: "DELETE" }),
+    request(`/api/journal/${entryId}`, {
+      method: "DELETE",
+    }),
 };
