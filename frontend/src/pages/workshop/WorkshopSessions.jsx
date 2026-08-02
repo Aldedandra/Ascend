@@ -1,4 +1,6 @@
-import { CalendarDays, FileText, Sparkles } from "lucide-react";
+import { ArrowRight, CalendarDays, Clock3 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { WORKSHOP_SESSIONS } from "../../data/workshopData";
 
 export default function WorkshopSessions() {
   return (
@@ -7,39 +9,50 @@ export default function WorkshopSessions() {
         <span className="eyebrow">DEVOPS WORKSHOP</span>
         <h1>Sessions</h1>
         <p>
-          Every meeting will become a structured session pack you can review,
-          practice, and build upon.
+          Review what Travis taught, reconnect the concepts, practice the
+          workflow, and prepare better questions for the next meeting.
         </p>
       </header>
 
-      <section className="panel workshop-empty-state">
-        <div className="workshop-empty-icon">
-          <CalendarDays size={30} />
-        </div>
+      <section className="workshop-session-list">
+        {WORKSHOP_SESSIONS.map((session) => (
+          <Link
+            className="workshop-session-card"
+            to={`/workshop/sessions/${session.id}`}
+            key={session.id}
+          >
+            <div className="workshop-session-number">
+              {String(session.number).padStart(2, "0")}
+            </div>
 
-        <div>
-          <span className="eyebrow">READY FOR PHASE 2</span>
-          <h2>Your previous workshop sessions will appear here.</h2>
-          <p>
-            The transcripts you already shared will be converted into clean
-            summaries, concepts, commands, labs, review questions, action
-            items, and questions for Travis.
-          </p>
-        </div>
-      </section>
+            <div className="workshop-session-main">
+              <div className="workshop-session-meta">
+                <span>
+                  <CalendarDays size={14} />
+                  {session.date}
+                </span>
+                <span>
+                  <Clock3 size={14} />
+                  {session.duration}
+                </span>
+              </div>
 
-      <section className="workshop-preview-grid">
-        <article className="panel workshop-preview-card">
-          <FileText size={21} />
-          <strong>Structured session notes</strong>
-          <p>Summary, concepts, terminology, commands, and workflows.</p>
-        </article>
+              <h2>{session.title}</h2>
+              <p>{session.summary}</p>
 
-        <article className="panel workshop-preview-card">
-          <Sparkles size={21} />
-          <strong>Connected follow-up</strong>
-          <p>Labs, handbook entries, action items, and curriculum links.</p>
-        </article>
+              <div className="workshop-topic-list">
+                {session.topics.map((topic) => (
+                  <span key={topic}>{topic}</span>
+                ))}
+              </div>
+            </div>
+
+            <div className="workshop-session-open">
+              <span>{session.status}</span>
+              <ArrowRight size={21} />
+            </div>
+          </Link>
+        ))}
       </section>
     </div>
   );

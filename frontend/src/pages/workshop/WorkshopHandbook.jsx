@@ -1,56 +1,44 @@
-import { BookOpenCheck, Boxes, Network, TerminalSquare } from "lucide-react";
-
-const handbookAreas = [
-  {
-    icon: TerminalSquare,
-    title: "Commands",
-    description: "Reusable CLI commands with context and examples.",
-  },
-  {
-    icon: Boxes,
-    title: "Tools and services",
-    description: "Docker, ECR, ECS, AWS CLI, Terraform, and future topics.",
-  },
-  {
-    icon: Network,
-    title: "Architecture notes",
-    description: "Request flows, deployment diagrams, and system relationships.",
-  },
-];
+import { ArrowRight, BookOpenCheck } from "lucide-react";
+import { Link } from "react-router-dom";
+import { WORKSHOP_HANDBOOK } from "../../data/workshopData";
 
 export default function WorkshopHandbook() {
+  const categories = [...new Set(WORKSHOP_HANDBOOK.map((entry) => entry.category))];
+
   return (
     <div className="page-stack">
       <header className="page-header">
         <span className="eyebrow">PERSONAL KNOWLEDGE BASE</span>
         <h1>Engineering handbook</h1>
         <p>
-          Build the reference you wish you had: concise, practical, and tied to
-          work you have actually performed.
+          Reusable reference notes extracted from work you actually performed
+          and conversations you actually had.
         </p>
       </header>
 
-      <section className="panel workshop-empty-state">
-        <div className="workshop-empty-icon">
-          <BookOpenCheck size={30} />
-        </div>
+      <div className="workshop-topic-list workshop-category-list">
+        {categories.map((category) => (
+          <span key={category}>{category}</span>
+        ))}
+      </div>
 
-        <div>
-          <span className="eyebrow">HANDBOOK READY</span>
-          <h2>Your first entries will be generated from workshop sessions.</h2>
-          <p>
-            Important commands, definitions, architecture explanations, and
-            lessons learned will be extracted into permanent reference notes.
-          </p>
-        </div>
-      </section>
+      <section className="workshop-handbook-grid">
+        {WORKSHOP_HANDBOOK.map((entry) => (
+          <article className="panel workshop-handbook-entry" key={entry.id}>
+            <div className="workshop-handbook-entry-icon">
+              <BookOpenCheck size={20} />
+            </div>
+            <span className="eyebrow">{entry.category}</span>
+            <h2>{entry.title}</h2>
+            <p>{entry.summary}</p>
 
-      <section className="workshop-preview-grid three-column-preview">
-        {handbookAreas.map(({ icon: Icon, title, description }) => (
-          <article className="panel workshop-preview-card" key={title}>
-            <Icon size={21} />
-            <strong>{title}</strong>
-            <p>{description}</p>
+            <Link
+              className="text-button"
+              to={`/workshop/sessions/${entry.sessionId}`}
+            >
+              From Session {String(entry.sessionNumber).padStart(2, "0")}
+              <ArrowRight size={15} />
+            </Link>
           </article>
         ))}
       </section>

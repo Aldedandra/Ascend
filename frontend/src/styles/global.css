@@ -588,7 +588,6 @@ body {
   .topbar-copy strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 74vw; }
 }
 
-<<<<<<< HEAD
 /* iPhone Home Screen safe-area support */
 @supports (padding: env(safe-area-inset-top)) {
   .topbar {
@@ -608,7 +607,7 @@ body,
   min-height: 100vh;
   min-height: 100dvh;
 }
-=======
+
 /* =========================================================
    Ascend Mobile UI v1.1
    Native iPhone and iPad dashboard refinement
@@ -894,4 +893,3 @@ body,
     min-width: 0;
   }
 }
->>>>>>> aecad755b92c911c48ed5780e5cff424af9b0614

@@ -10,6 +10,7 @@ import WorkshopDashboard from "./pages/workshop/WorkshopDashboard";
 import WorkshopHandbook from "./pages/workshop/WorkshopHandbook";
 import WorkshopLabs from "./pages/workshop/WorkshopLabs";
 import WorkshopQuestions from "./pages/workshop/WorkshopQuestions";
+import WorkshopSessionDetail from "./pages/workshop/WorkshopSessionDetail";
 import WorkshopSessions from "./pages/workshop/WorkshopSessions";
 
 export default function App() {
@@ -25,12 +26,19 @@ export default function App() {
 
         <Route path="/workshop" element={<WorkshopDashboard />} />
         <Route path="/workshop/sessions" element={<WorkshopSessions />} />
+        <Route
+          path="/workshop/sessions/:sessionId"
+          element={<WorkshopSessionDetail />}
+        />
         <Route path="/workshop/labs" element={<WorkshopLabs />} />
         <Route path="/workshop/handbook" element={<WorkshopHandbook />} />
         <Route path="/workshop/questions" element={<WorkshopQuestions />} />
 
         <Route path="/labs" element={<Navigate to="/workshop/labs" replace />} />
-        <Route path="/handbook" element={<Navigate to="/workshop/handbook" replace />} />
+        <Route
+          path="/handbook"
+          element={<Navigate to="/workshop/handbook" replace />}
+        />
       </Route>
     </Routes>
   );

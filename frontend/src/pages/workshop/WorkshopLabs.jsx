@@ -1,4 +1,6 @@
-import { CheckCircle2, FlaskConical, Wrench } from "lucide-react";
+import { ArrowRight, CheckCircle2, FlaskConical } from "lucide-react";
+import { Link } from "react-router-dom";
+import { WORKSHOP_LABS } from "../../data/workshopData";
 
 export default function WorkshopLabs() {
   return (
@@ -12,34 +14,35 @@ export default function WorkshopLabs() {
         </p>
       </header>
 
-      <section className="panel workshop-empty-state">
-        <div className="workshop-empty-icon">
-          <FlaskConical size={30} />
-        </div>
+      <section className="workshop-lab-list">
+        {WORKSHOP_LABS.map((lab) => (
+          <article className="panel workshop-lab-card" key={lab.id}>
+            <div className="workshop-lab-card-icon">
+              <FlaskConical size={23} />
+            </div>
 
-        <div>
-          <span className="eyebrow">LAB FRAMEWORK READY</span>
-          <h2>Session-based labs arrive with the workshop content.</h2>
-          <p>
-            Each lab will include an objective, prerequisites, numbered steps,
-            expected evidence, troubleshooting notes, and a completion
-            checklist.
-          </p>
-        </div>
-      </section>
+            <div>
+              <span className="eyebrow">
+                SESSION {String(lab.sessionNumber).padStart(2, "0")}
+              </span>
+              <h2>{lab.title}</h2>
+              <p>{lab.objective}</p>
 
-      <section className="workshop-preview-grid">
-        <article className="panel workshop-preview-card">
-          <Wrench size={21} />
-          <strong>Build and troubleshoot</strong>
-          <p>Use Git, Docker, AWS, Ascend, Forge, and your home server.</p>
-        </article>
+              <div className="workshop-lab-card-evidence">
+                <CheckCircle2 size={16} />
+                {lab.evidence.length} evidence items
+              </div>
+            </div>
 
-        <article className="panel workshop-preview-card">
-          <CheckCircle2 size={21} />
-          <strong>Capture evidence</strong>
-          <p>Record commands, screenshots, results, lessons, and follow-up work.</p>
-        </article>
+            <Link
+              className="secondary-button"
+              to={`/workshop/sessions/${lab.id}`}
+            >
+              Open lab
+              <ArrowRight size={16} />
+            </Link>
+          </article>
+        ))}
       </section>
     </div>
   );

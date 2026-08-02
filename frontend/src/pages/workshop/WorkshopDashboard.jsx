@@ -7,6 +7,12 @@ import {
   Presentation,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import {
+  WORKSHOP_HANDBOOK,
+  WORKSHOP_LABS,
+  WORKSHOP_QUESTIONS,
+  WORKSHOP_SESSIONS,
+} from "../../data/workshopData";
 
 const workshopAreas = [
   {
@@ -44,6 +50,8 @@ const workshopAreas = [
 ];
 
 export default function WorkshopDashboard() {
+  const latestSession = WORKSHOP_SESSIONS.at(-1);
+
   return (
     <div className="page-stack">
       <section className="workshop-hero">
@@ -57,8 +65,11 @@ export default function WorkshopDashboard() {
           </p>
 
           <div className="workshop-hero-actions">
-            <Link className="primary-button" to="/workshop/sessions">
-              View sessions
+            <Link
+              className="primary-button"
+              to={`/workshop/sessions/${latestSession.id}`}
+            >
+              Open latest session
               <ArrowRight size={18} />
             </Link>
 
@@ -76,24 +87,52 @@ export default function WorkshopDashboard() {
         </div>
       </section>
 
-      <section className="workshop-status-grid">
+      <section className="workshop-status-grid workshop-status-grid-four">
         <article className="workshop-status-card">
           <span>Sessions captured</span>
-          <strong>0</strong>
-          <small>Existing transcripts arrive in Phase 2</small>
+          <strong>{WORKSHOP_SESSIONS.length}</strong>
+          <small>Structured from your meeting transcripts</small>
         </article>
 
         <article className="workshop-status-card">
           <span>Follow-up labs</span>
-          <strong>0</strong>
-          <small>Labs will connect directly to session topics</small>
+          <strong>{WORKSHOP_LABS.length}</strong>
+          <small>Practice tied directly to workshop topics</small>
         </article>
 
         <article className="workshop-status-card">
-          <span>Open questions</span>
-          <strong>0</strong>
-          <small>Build the list before your next meeting</small>
+          <span>Questions prepared</span>
+          <strong>{WORKSHOP_QUESTIONS.length}</strong>
+          <small>Ready to refine before the next meeting</small>
         </article>
+
+        <article className="workshop-status-card">
+          <span>Handbook entries</span>
+          <strong>{WORKSHOP_HANDBOOK.length}</strong>
+          <small>Reusable engineering reference notes</small>
+        </article>
+      </section>
+
+      <section className="workshop-latest-session panel">
+        <div>
+          <span className="eyebrow">LATEST SESSION</span>
+          <h2>{latestSession.title}</h2>
+          <p>{latestSession.summary}</p>
+
+          <div className="workshop-topic-list">
+            {latestSession.topics.slice(0, 5).map((topic) => (
+              <span key={topic}>{topic}</span>
+            ))}
+          </div>
+        </div>
+
+        <Link
+          className="secondary-button"
+          to={`/workshop/sessions/${latestSession.id}`}
+        >
+          Review session
+          <ArrowRight size={17} />
+        </Link>
       </section>
 
       <section className="workshop-area-grid">
