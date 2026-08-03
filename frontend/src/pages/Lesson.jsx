@@ -5,6 +5,7 @@ import {
   Headphones,
   MessageSquareText,
   Trophy,
+  Download,
 } from "lucide-react";
 import {
   useEffect,
@@ -255,6 +256,20 @@ export default function Lesson() {
     }
   };
 
+  const downloadNotes = () => {
+    const sections = lesson.content
+      .map((section) => `${section.heading}\n${section.body}`)
+      .join("\n\n");
+    const notes = `ASCEND — LESSON ${lesson.id}\n${lesson.title}\n\n${lesson.summary}\n\n${sections}\n\nLAB\n${lesson.lab.instructions.map((step, index) => `${index + 1}. ${step}`).join("\n")}\n\nREFLECTION\n${lesson.reflection}`;
+    const blob = new Blob([notes], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `ascend-lesson-${lesson.id}-notes.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   const goToNextLesson = () => {
     if (!nextLesson) {
       return;
@@ -316,11 +331,9 @@ export default function Lesson() {
               +{lesson.xp} XP
             </span>
 
-            <span>
-              {lesson.completed
-                ? "Completed"
-                : "In progress"}
-            </span>
+            {!lesson.completed && (
+              <span>In progress</span>
+            )}
           </div>
         </div>
 
@@ -398,6 +411,15 @@ export default function Lesson() {
 
       {activeTab === "lesson" && (
         <section className="panel lesson-content">
+          <div className="lesson-content-toolbar">
+            <div>
+              <span className="eyebrow">LESSON NOTES</span>
+              <p>Read the full lesson or save a clean text copy for offline review.</p>
+            </div>
+            <button className="secondary-button" onClick={downloadNotes}>
+              <Download size={18} /> Download notes
+            </button>
+          </div>
           {lesson.content.map(
             (section) => (
               <article
@@ -421,7 +443,7 @@ export default function Lesson() {
           <div className="panel-heading">
             <div>
               <span className="eyebrow">
-                THE JOURNEY PODCAST
+                ASCEND AUDIO
               </span>
 
               <h2>
@@ -432,11 +454,7 @@ export default function Lesson() {
           </div>
 
           <p className="audio-note">
-            Use ChatGPT Read Aloud,
-            your browser&apos;s
-            text-to-speech, or copy
-            this script into your
-            preferred reader.
+            Native narration controls are coming next. This script is already organized for the Ascend audio player and can be reviewed here in the meantime.
           </p>
 
           <div className="audio-script">

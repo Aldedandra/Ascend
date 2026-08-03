@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     environment:
      JOURNEY_DB_PATH: /data/journey.db
-     CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000,http://100.105.129.14:3001,capacitor://localhost
+     CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000,http://100.73.37.48:3001,capacitor://localhost
     volumes:
       - journey_data:/data
     ports:

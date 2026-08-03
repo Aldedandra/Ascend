@@ -893,3 +893,34 @@ body,
     min-width: 0;
   }
 }
+
+/* Ascend Phase 3 — reusable lesson reading and mobile polish */
+.lesson-content-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 20px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+.lesson-content-toolbar p { margin: 5px 0 0; }
+.lesson-content article h2 { margin-bottom: 8px; }
+.lesson-content article p { margin: 0; line-height: 1.78; }
+.tab-row { scrollbar-width: thin; scrollbar-color: rgba(41,211,232,.28) transparent; }
+.tab-row::-webkit-scrollbar { height: 4px; }
+.tab-row::-webkit-scrollbar-thumb { background: rgba(41,211,232,.28); border-radius: 999px; }
+
+@media (max-width: 560px) {
+  .lesson-hero { gap: 18px; padding: 20px; }
+  .lesson-hero h1 { font-size: clamp(2rem, 10vw, 2.65rem); line-height: 1.04; margin: 10px 0 14px; }
+  .lesson-hero p { font-size: 1rem; line-height: 1.58; }
+  .lesson-hero .complete-button { width: 100%; justify-content: center; }
+  .tab-row { margin-inline: -2px; padding: 5px; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
+  .tab-row button { flex: 0 0 auto; min-width: 92px; padding: 11px 14px; scroll-snap-align: start; }
+  .lesson-content-toolbar { align-items: stretch; flex-direction: column; gap: 12px; }
+  .lesson-content-toolbar .secondary-button { width: 100%; justify-content: center; }
+  .lesson-content { gap: 18px; }
+  .lesson-content article { padding-bottom: 20px; }
+  .audio-script, .prompt-box { padding: 16px; line-height: 1.72; }
+}

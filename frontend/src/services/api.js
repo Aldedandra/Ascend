@@ -1,4 +1,11 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+import { Capacitor } from "@capacitor/core";
+
+const NATIVE_API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://100.73.37.48:8000";
+
+const API_BASE_URL = Capacitor.isNativePlatform()
+  ? NATIVE_API_BASE_URL
+  : "";
 
 const request = async (path, options = {}) => {
   const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -8,6 +15,7 @@ const request = async (path, options = {}) => {
     },
     ...options,
   });
+
 
   if (!response.ok) {
     const error = await response
