@@ -924,3 +924,153 @@ body,
   .lesson-content article { padding-bottom: 20px; }
   .audio-script, .prompt-box { padding: 16px; line-height: 1.72; }
 }
+
+/* =========================================================
+   Ascend Phase 3 — lesson learning blocks
+   Reusable diagrams, engineering callouts, and mini exercises
+   ========================================================= */
+
+.lesson-learning-extras {
+  display: grid;
+  gap: 18px;
+  margin-top: 12px;
+}
+
+.lesson-learning-block {
+  padding: 22px;
+  border: 1px solid rgba(41, 211, 232, 0.16);
+  border-radius: 16px;
+  background:
+    linear-gradient(145deg, rgba(41, 211, 232, 0.055), transparent 52%),
+    rgba(5, 17, 22, 0.7);
+}
+
+.lesson-learning-block-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.lesson-learning-block-heading h2 {
+  margin-bottom: 0;
+}
+
+.lesson-learning-block-icon {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(41, 211, 232, 0.18);
+  border-radius: 12px;
+  color: #78eef4;
+  background: rgba(41, 211, 232, 0.09);
+}
+
+.lesson-flow-diagram {
+  display: grid;
+  justify-items: stretch;
+  gap: 0;
+  width: min(720px, 100%);
+  margin: 22px auto;
+}
+
+.lesson-flow-step {
+  display: grid;
+  justify-items: center;
+  width: 100%;
+}
+
+.lesson-flow-node {
+  width: 100%;
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid rgba(41, 211, 232, 0.2);
+  border-radius: 13px;
+  text-align: center;
+  background: rgba(8, 29, 36, 0.94);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.lesson-flow-node strong {
+  color: var(--text);
+}
+
+.lesson-flow-node span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.lesson-flow-arrow {
+  margin: 5px 0;
+  color: var(--accent-2);
+}
+
+.engineer-perspective {
+  border-left: 4px solid var(--accent-2);
+  background:
+    linear-gradient(110deg, rgba(41, 211, 232, 0.1), transparent 62%),
+    rgba(7, 24, 30, 0.92);
+}
+
+.engineer-perspective > p,
+.try-it-yourself > p,
+.lesson-diagram-block > p {
+  margin-bottom: 0;
+}
+
+.try-it-yourself {
+  border-color: rgba(120, 238, 244, 0.22);
+}
+
+.lesson-mini-exercise {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 0;
+  padding-left: 24px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.lesson-mini-exercise li {
+  padding-left: 4px;
+}
+
+.lesson-mini-exercise li::marker {
+  color: var(--accent-2);
+  font-weight: 850;
+}
+
+.lesson-learning-caption {
+  margin: 18px 0 0 !important;
+  padding: 12px 14px;
+  border-radius: 11px;
+  color: #a9c8cd;
+  background: rgba(41, 211, 232, 0.055);
+}
+
+.lesson-learning-caption strong {
+  color: #dffbfc;
+}
+
+@media (max-width: 560px) {
+  .lesson-learning-block {
+    padding: 17px;
+  }
+
+  .lesson-learning-block-heading {
+    gap: 10px;
+  }
+
+  .lesson-learning-block-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .lesson-flow-node {
+    padding: 12px 13px;
+  }
+}

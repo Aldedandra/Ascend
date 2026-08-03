@@ -6,6 +6,10 @@ import {
   MessageSquareText,
   Trophy,
   Download,
+  Lightbulb,
+  ListChecks,
+  Network,
+  ArrowDown,
 } from "lucide-react";
 import {
   useEffect,
@@ -20,6 +24,105 @@ import {
 import {
   api,
 } from "../services/api";
+
+
+function LessonDiagram({ diagram }) {
+  if (!diagram?.nodes?.length) {
+    return null;
+  }
+
+  return (
+    <section className="lesson-learning-block lesson-diagram-block">
+      <div className="lesson-learning-block-heading">
+        <span className="lesson-learning-block-icon">
+          <Network size={20} />
+        </span>
+        <div>
+          <span className="eyebrow">SYSTEM MAP</span>
+          <h2>{diagram.title}</h2>
+        </div>
+      </div>
+
+      {diagram.description && (
+        <p>{diagram.description}</p>
+      )}
+
+      <div className="lesson-flow-diagram" role="list" aria-label={diagram.title}>
+        {diagram.nodes.map((node, index) => (
+          <div className="lesson-flow-step" key={`${node.label}-${index}`} role="listitem">
+            <div className="lesson-flow-node">
+              <strong>{node.label}</strong>
+              {node.detail && <span>{node.detail}</span>}
+            </div>
+
+            {index < diagram.nodes.length - 1 && (
+              <ArrowDown className="lesson-flow-arrow" size={20} aria-hidden="true" />
+            )}
+          </div>
+        ))}
+      </div>
+
+      {diagram.caption && (
+        <p className="lesson-learning-caption">{diagram.caption}</p>
+      )}
+    </section>
+  );
+}
+
+function EngineerPerspective({ perspective }) {
+  if (!perspective) {
+    return null;
+  }
+
+  return (
+    <aside className="lesson-learning-block engineer-perspective">
+      <div className="lesson-learning-block-heading">
+        <span className="lesson-learning-block-icon">
+          <Lightbulb size={20} />
+        </span>
+        <div>
+          <span className="eyebrow">ENGINEER'S PERSPECTIVE</span>
+          <h2>{perspective.title}</h2>
+        </div>
+      </div>
+      <p>{perspective.body}</p>
+    </aside>
+  );
+}
+
+function TryItYourself({ exercise }) {
+  if (!exercise?.steps?.length) {
+    return null;
+  }
+
+  return (
+    <section className="lesson-learning-block try-it-yourself">
+      <div className="lesson-learning-block-heading">
+        <span className="lesson-learning-block-icon">
+          <ListChecks size={20} />
+        </span>
+        <div>
+          <span className="eyebrow">TRY IT YOURSELF</span>
+          <h2>{exercise.title}</h2>
+        </div>
+      </div>
+
+      {exercise.intro && <p>{exercise.intro}</p>}
+
+      <ol className="lesson-mini-exercise">
+        {exercise.steps.map((step, index) => (
+          <li key={`${index}-${step}`}>{step}</li>
+        ))}
+      </ol>
+
+      {exercise.takeaway && (
+        <p className="lesson-learning-caption">
+          <strong>What to notice:</strong> {exercise.takeaway}
+        </p>
+      )}
+    </section>
+  );
+}
 
 const tabs = [
   {
@@ -435,6 +538,12 @@ export default function Lesson() {
               </article>
             )
           )}
+
+          <div className="lesson-learning-extras">
+            <LessonDiagram diagram={lesson.diagram} />
+            <EngineerPerspective perspective={lesson.engineer_perspective} />
+            <TryItYourself exercise={lesson.try_it_yourself} />
+          </div>
         </section>
       )}
 
