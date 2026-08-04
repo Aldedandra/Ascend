@@ -2,7 +2,6 @@ import {
   CheckCircle2,
   Clipboard,
   FlaskConical,
-  Headphones,
   MessageSquareText,
   Trophy,
   Download,
@@ -24,6 +23,7 @@ import {
 import {
   api,
 } from "../services/api";
+import AscendAudioPlayer from "../components/AscendAudioPlayer";
 
 
 function LessonDiagram({ diagram }) {
@@ -548,28 +548,7 @@ export default function Lesson() {
       )}
 
       {activeTab === "audio" && (
-        <section className="panel">
-          <div className="panel-heading">
-            <div>
-              <span className="eyebrow">
-                ASCEND AUDIO
-              </span>
-
-              <h2>
-                <Headphones size={22} />
-                {lesson.title}
-              </h2>
-            </div>
-          </div>
-
-          <p className="audio-note">
-            Native narration controls are coming next. This script is already organized for the Ascend audio player and can be reviewed here in the meantime.
-          </p>
-
-          <div className="audio-script">
-            {lesson.audio_script}
-          </div>
-        </section>
+        <AscendAudioPlayer lesson={lesson} />
       )}
 
       {activeTab === "lab" && (

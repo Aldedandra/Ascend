@@ -1074,3 +1074,206 @@ body,
     padding: 12px 13px;
   }
 }
+
+/* =========================================================
+   Ascend Phase 3 — native audio player
+   ========================================================= */
+.ascend-audio-player {
+  display: grid;
+  gap: 22px;
+}
+
+.ascend-audio-heading {
+  margin-bottom: 0;
+}
+
+.audio-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(255,255,255,.03);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.audio-status-speaking {
+  color: #b8fbfd;
+  border-color: rgba(41,211,232,.3);
+  background: rgba(41,211,232,.1);
+}
+
+.audio-status-paused {
+  color: #f3d7a0;
+  border-color: rgba(231,185,104,.25);
+  background: rgba(231,185,104,.08);
+}
+
+.audio-now-reading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 17px;
+  border: 1px solid rgba(41,211,232,.16);
+  border-radius: 15px;
+  background: linear-gradient(135deg, rgba(41,211,232,.08), transparent 58%);
+}
+
+.audio-now-reading > svg {
+  color: #78eef4;
+  flex: 0 0 auto;
+}
+
+.audio-now-reading span,
+.audio-now-reading strong {
+  display: block;
+}
+
+.audio-now-reading span {
+  color: var(--muted);
+  font-size: .75rem;
+}
+
+.audio-now-reading strong {
+  margin-top: 3px;
+}
+
+.audio-progress-wrap {
+  display: grid;
+  gap: 9px;
+}
+
+.audio-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: .76rem;
+}
+
+.audio-progress-track {
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255,255,255,.065);
+}
+
+.audio-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transition: width .2s ease;
+}
+
+.audio-primary-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.audio-play-button,
+.audio-control-button {
+  border: 0;
+  cursor: pointer;
+}
+
+.audio-play-button {
+  min-width: 150px;
+  min-height: 58px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 24px;
+  border-radius: 999px;
+  color: #031116;
+  background: linear-gradient(135deg, #54e5ee, #12adbd);
+  box-shadow: 0 15px 34px rgba(10,165,183,.24);
+  font-weight: 850;
+}
+
+.audio-control-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(41,211,232,.18);
+  border-radius: 50%;
+  color: var(--text);
+  background: rgba(41,211,232,.07);
+}
+
+.audio-speed-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.audio-speed-row > span {
+  color: var(--muted);
+  font-size: .82rem;
+  font-weight: 750;
+}
+
+.audio-speed-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.audio-speed-options button {
+  min-width: 48px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--muted);
+  background: rgba(255,255,255,.025);
+  cursor: pointer;
+}
+
+.audio-speed-options button.active {
+  color: var(--text);
+  border-color: rgba(41,211,232,.32);
+  background: rgba(41,211,232,.12);
+}
+
+.audio-player-message {
+  padding: 11px 13px;
+  border-radius: 10px;
+  color: #c7e9ec;
+  background: rgba(41,211,232,.06);
+  font-size: .8rem;
+}
+
+.audio-script-details {
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+
+.audio-script-details summary {
+  color: #78eef4;
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.audio-script-details .audio-script {
+  margin-top: 15px;
+}
+
+@media (max-width: 560px) {
+  .audio-primary-controls { gap: 12px; }
+  .audio-play-button { min-width: 132px; padding-inline: 18px; }
+  .audio-speed-row { align-items: flex-start; flex-direction: column; }
+  .audio-speed-options { width: 100%; }
+  .audio-speed-options button { flex: 1; }
+  .audio-progress-labels { font-size: .68rem; }
+}
