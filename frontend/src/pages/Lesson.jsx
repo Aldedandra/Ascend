@@ -24,6 +24,7 @@ import {
   api,
 } from "../services/api";
 import AscendAudioPlayer from "../components/AscendAudioPlayer";
+import useLearningSession from "../hooks/useLearningSession";
 
 
 function LessonDiagram({ diagram }) {
@@ -153,16 +154,18 @@ export default function Lesson() {
   } = useParams();
 
   const navigate = useNavigate();
+  const {
+    session: learningSession,
+    setActiveTab: saveActiveTab,
+    updateAudioProgress,
+  } = useLearningSession(lessonId);
 
   const [
     lesson,
     setLesson,
   ] = useState(null);
 
-  const [
-    activeTab,
-    setActiveTab,
-  ] = useState("lesson");
+  const activeTab = learningSession.activeTab || "lesson";
 
   const [
     answers,
@@ -198,7 +201,6 @@ export default function Lesson() {
     let cancelled = false;
 
     setLesson(null);
-    setActiveTab("lesson");
     setAnswers([]);
     setQuizResult(null);
     setCopied(false);
@@ -497,7 +499,7 @@ export default function Lesson() {
                 : ""
             }
             onClick={() => {
-              setActiveTab(tab.id);
+              saveActiveTab(tab.id);
               setError("");
             }}
           >
@@ -548,7 +550,10 @@ export default function Lesson() {
       )}
 
       {activeTab === "audio" && (
-        <AscendAudioPlayer lesson={lesson} />
+        <AscendAudioPlayer
+          lesson={lesson}
+          onProgress={updateAudioProgress}
+        />
       )}
 
       {activeTab === "lab" && (

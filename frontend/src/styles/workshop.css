@@ -4,47 +4,120 @@
 
 .brand {
   position: relative;
-  align-items: flex-start;
+  display: grid;
+  gap: 18px;
+  padding: 4px 6px 24px;
+}
+
+.brand-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand-identity {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 11px;
+}
+
+.brand-copy {
+  min-width: 0;
+}
+
+.brand-copy strong {
+  display: block;
+  color: var(--text);
+  font-size: 0.86rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+}
+
+.brand-copy span {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.67rem;
+  letter-spacing: 0.03em;
 }
 
 .workspace-switcher {
   position: relative;
   min-width: 0;
-  flex: 1;
+  width: 100%;
+}
+
+.workspace-kicker {
+  display: block;
+  margin: 0 0 7px 4px;
+  color: #567078;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 .workspace-trigger {
   width: 100%;
   min-width: 0;
   display: grid;
-  grid-template-columns: 34px minmax(0, 1fr) auto;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 10px;
-  padding: 7px 8px;
-  border: 1px solid transparent;
-  border-radius: 12px;
+  gap: 11px;
+  padding: 8px 11px;
+  border: 1px solid rgba(139, 163, 205, 0.14);
+  border-radius: 14px;
   color: var(--text);
-  background: transparent;
+  background: rgba(255, 255, 255, 0.025);
   cursor: pointer;
   text-align: left;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
 
 .workspace-trigger:hover,
 .workspace-trigger.open {
   background: rgba(41, 211, 232, 0.07);
-  border-color: rgba(41, 211, 232, 0.14);
+  border-color: rgba(41, 211, 232, 0.2);
+}
+
+.workspace-trigger:active {
+  transform: scale(0.99);
 }
 
 .workspace-trigger-icon,
 .workspace-option-icon {
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
   color: #78eef4;
   background: rgba(41, 211, 232, 0.1);
   border: 1px solid rgba(41, 211, 232, 0.14);
+}
+
+/* Force the Lucide glyph itself to the visual center of each workspace tile.
+   Using absolute centering avoids baseline/viewBox quirks on iOS WebKit. */
+.workspace-trigger-icon,
+.workspace-option-icon {
+  position: relative;
+  line-height: 0;
+}
+
+.workspace-trigger-icon > svg,
+.workspace-option-icon > svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: 21px;
+  height: 21px;
+  margin: 0;
+  flex: none;
+  transform: translate(-50%, -50%) translateY(4px);
 }
 
 .workspace-trigger-copy,
@@ -63,16 +136,16 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
 }
 
 .workspace-trigger-copy span {
-  margin-top: 2px;
+  margin-top: 3px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--muted);
-  font-size: 0.68rem;
+  font-size: 0.66rem;
 }
 
 .workspace-chevron {
@@ -87,13 +160,14 @@
 .workspace-menu {
   position: absolute;
   top: calc(100% + 8px);
-  left: -58px;
-  width: 286px;
+  left: 0;
+  width: 100%;
+  min-width: 250px;
   z-index: 80;
-  padding: 10px;
+  padding: 9px;
   border: 1px solid rgba(41, 211, 232, 0.18);
   border-radius: 16px;
-  background: rgba(6, 18, 23, 0.98);
+  background: rgba(6, 18, 23, 0.985);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.48);
   backdrop-filter: blur(20px);
 }
@@ -102,7 +176,7 @@
   display: block;
   padding: 4px 8px 9px;
   color: #567078;
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -113,8 +187,8 @@
   display: grid;
   grid-template-columns: 36px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 11px;
-  padding: 10px;
+  gap: 10px;
+  padding: 9px;
   border: 1px solid transparent;
   border-radius: 12px;
   color: var(--text);
@@ -129,14 +203,20 @@
   border-color: rgba(41, 211, 232, 0.14);
 }
 
+.workspace-option-icon {
+  width: 36px;
+  height: 36px;
+}
+
 .workspace-option-copy strong {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
 }
 
 .workspace-option-copy span {
   margin-top: 3px;
   color: var(--muted);
-  font-size: 0.7rem;
+  font-size: 0.66rem;
+  line-height: 1.35;
 }
 
 .workspace-option > svg {
@@ -460,5 +540,43 @@
   .workspace-trigger-icon {
     width: 30px;
     height: 30px;
+  }
+}
+
+/* Phase 1 sidebar polish: keep identity and workspace controls readable on phones. */
+@media (max-width: 820px) {
+  .brand {
+    gap: 16px;
+    padding-inline: 2px;
+  }
+
+  .brand-header {
+    min-height: 48px;
+  }
+
+  .brand-copy strong {
+    font-size: 0.8rem;
+  }
+
+  .brand-copy span {
+    font-size: 0.64rem;
+  }
+
+  .workspace-menu {
+    left: 0;
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .workspace-trigger {
+    grid-template-columns: 36px minmax(0, 1fr) auto;
+    padding: 9px 10px;
+  }
+
+  .workspace-trigger-icon {
+    width: 36px;
+    height: 36px;
   }
 }

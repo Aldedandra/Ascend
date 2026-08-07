@@ -3,6 +3,7 @@ import {
   Pause,
   Play,
   RotateCcw,
+  RotateCw,
   Square,
   Volume2,
   Mic2,
@@ -18,9 +19,11 @@ import {
 } from "../services/ascendSpeech";
 import { formatForNarration } from "../services/narrationFormatter";
 
-const SPEED_OPTIONS = [0.8, 1, 1.15, 1.3, 1.5];
+const SPEED_OPTIONS = [0.8, 0.9, 1, 1.15, 1.3, 1.5];
 const WORDS_PER_MINUTE_AT_1X = 165;
+const SEEK_SECONDS = 15;
 const VOICE_STORAGE_KEY = "ascend-audio-narrator";
+const RATE_STORAGE_KEY = "ascend-audio-playback-speed";
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
@@ -31,12 +34,45 @@ function estimateMinutes(text, rate) {
   return Math.max(1, Math.ceil(words / (WORDS_PER_MINUTE_AT_1X * rate)));
 }
 
-export default function AscendAudioPlayer({ lesson }) {
+function estimateSeconds(text, rate) {
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  if (!words) return 0;
+  return Math.max(1, Math.round((words / (WORDS_PER_MINUTE_AT_1X * rate)) * 60));
+}
+
+function formatClock(totalSeconds) {
+  const safeSeconds = Math.max(0, Math.round(totalSeconds || 0));
+  const minutes = Math.floor(safeSeconds / 60);
+  const seconds = safeSeconds % 60;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
+function snapToWordBoundary(text, index) {
+  if (!text.length) return 0;
+
+  const safeIndex = clamp(Math.round(index), 0, text.length);
+  if (safeIndex === 0 || safeIndex === text.length) {
+    return safeIndex;
+  }
+
+  const before = text.lastIndexOf(" ", safeIndex);
+  const after = text.indexOf(" ", safeIndex);
+
+  if (before < 0) return after < 0 ? safeIndex : after + 1;
+  if (after < 0) return before + 1;
+
+  return safeIndex - before <= after - safeIndex ? before + 1 : after + 1;
+}
+
+export default function AscendAudioPlayer({ lesson, onProgress }) {
   const storageKey = `ascend-audio-${lesson.id}`;
   const [status, setStatus] = useState("idle");
   const [rate, setRate] = useState(() => {
-    const stored = Number(localStorage.getItem(`${storageKey}-rate`));
-    return SPEED_OPTIONS.includes(stored) ? stored : 1;
+    const lessonRate = Number(localStorage.getItem(`${storageKey}-rate`));
+    const globalRate = Number(localStorage.getItem(RATE_STORAGE_KEY));
+    if (SPEED_OPTIONS.includes(lessonRate)) return lessonRate;
+    if (SPEED_OPTIONS.includes(globalRate)) return globalRate;
+    return 0.8;
   });
   const [characterIndex, setCharacterIndex] = useState(() => {
     const stored = Number(localStorage.getItem(`${storageKey}-position`));
@@ -49,8 +85,11 @@ export default function AscendAudioPlayer({ lesson }) {
   );
   const [voicesLoading, setVoicesLoading] = useState(true);
   const [previewingVoice, setPreviewingVoice] = useState(false);
+  const [scrubProgress, setScrubProgress] = useState(null);
   const playbackStartIndex = useRef(characterIndex);
   const narrationMapRef = useRef(null);
+  const seekInFlightRef = useRef(false);
+  const characterIndexRef = useRef(characterIndex);
 
   const script = lesson.audio_script || "";
   const speechAvailable = isSpeechAvailable();
@@ -66,7 +105,18 @@ export default function AscendAudioPlayer({ lesson }) {
     () => estimateMinutes(remainingText || script, rate),
     [remainingText, rate, script]
   );
-
+  const totalEstimatedSeconds = useMemo(
+    () => estimateSeconds(script, rate),
+    [script, rate]
+  );
+  const displayedProgress = scrubProgress ?? progress;
+  const elapsedEstimatedSeconds = Math.round(
+    (displayedProgress / 100) * totalEstimatedSeconds
+  );
+  const remainingEstimatedSeconds = Math.max(
+    0,
+    totalEstimatedSeconds - elapsedEstimatedSeconds
+  );
 
   useEffect(() => {
     if (!speechAvailable) {
@@ -125,16 +175,35 @@ export default function AscendAudioPlayer({ lesson }) {
 
   useEffect(() => {
     localStorage.setItem(`${storageKey}-rate`, String(rate));
+    localStorage.setItem(RATE_STORAGE_KEY, String(rate));
   }, [rate, storageKey]);
 
   useEffect(() => {
     localStorage.setItem(`${storageKey}-position`, String(characterIndex));
-  }, [characterIndex, storageKey]);
+    onProgress?.({ position: characterIndex, progress });
+  }, [characterIndex, onProgress, progress, storageKey]);
 
   useEffect(() => {
+    characterIndexRef.current = characterIndex;
+  }, [characterIndex]);
+
+  useEffect(() => {
+    const savedPosition = Number(localStorage.getItem(`${storageKey}-position`));
+    const lessonRate = Number(localStorage.getItem(`${storageKey}-rate`));
+    const globalRate = Number(localStorage.getItem(RATE_STORAGE_KEY));
+
+    setCharacterIndex(Number.isFinite(savedPosition) ? savedPosition : 0);
+    setRate(
+      SPEED_OPTIONS.includes(lessonRate)
+        ? lessonRate
+        : SPEED_OPTIONS.includes(globalRate)
+          ? globalRate
+          : 0.8
+    );
+    setScrubProgress(null);
     setStatus("idle");
     setError("");
-  }, [lesson.id]);
+  }, [lesson.id, storageKey]);
 
   useEffect(() => {
     if (!speechAvailable) {
@@ -248,9 +317,71 @@ export default function AscendAudioPlayer({ lesson }) {
     }
   };
 
-  const restartPlayback = async () => {
-    await ascendSpeech.stop().catch(() => {});
-    await startSpeaking({ restart: true });
+  const seekToCharacterIndex = async (nextCharacterIndex, { autoplay = false } = {}) => {
+    if (seekInFlightRef.current || !script.length) return;
+
+    seekInFlightRef.current = true;
+    const snappedIndex = snapToWordBoundary(
+      script,
+      clamp(nextCharacterIndex, 0, script.length)
+    );
+
+    // Update the UI immediately. This also prevents a late progress callback from
+    // the old utterance from becoming the basis of the next seek.
+    characterIndexRef.current = snappedIndex;
+    playbackStartIndex.current = snappedIndex;
+    narrationMapRef.current = null;
+    setCharacterIndex(snappedIndex);
+    setScrubProgress(null);
+    setError("");
+
+    try {
+      if (autoplay && snappedIndex < script.length) {
+        const sourceText = script.slice(snappedIndex);
+        const formattedNarration = formatForNarration(sourceText);
+        playbackStartIndex.current = snappedIndex;
+        narrationMapRef.current = formattedNarration;
+
+        // Let the native plugin replace the current utterance atomically. Calling
+        // stop() first can deliver a late completion/cancel callback from the old
+        // utterance after the replacement begins, which was causing seeks to jump
+        // to 100%.
+        await ascendSpeech.speak({
+          text: formattedNarration.text,
+          rate,
+          title: lesson.title,
+          lessonId: lesson.id,
+          voiceIdentifier: selectedVoiceId,
+        });
+      } else {
+        await ascendSpeech.stop().catch(() => {});
+        setStatus(snappedIndex >= script.length ? "completed" : "idle");
+      }
+    } catch (seekError) {
+      setError(seekError?.message || "Unable to seek narration.");
+    } finally {
+      seekInFlightRef.current = false;
+    }
+  };
+
+  const seekBySeconds = async (seconds) => {
+    if (!script.length || !totalEstimatedSeconds) return;
+
+    const wasPlaying = status === "speaking";
+    const baseIndex = characterIndexRef.current;
+    const characterDelta = (seconds / totalEstimatedSeconds) * script.length;
+    const nextIndex = baseIndex + characterDelta;
+
+    await seekToCharacterIndex(nextIndex, { autoplay: wasPlaying });
+  };
+
+  const commitScrub = async (explicitProgress = scrubProgress) => {
+    const progressValue = Number(explicitProgress);
+    if (!Number.isFinite(progressValue) || !script.length) return;
+
+    const wasPlaying = status === "speaking";
+    const nextIndex = (clamp(progressValue, 0, 100) / 100) * script.length;
+    await seekToCharacterIndex(nextIndex, { autoplay: wasPlaying });
   };
 
   const handleRateChange = async (nextRate) => {
@@ -338,23 +469,53 @@ export default function AscendAudioPlayer({ lesson }) {
 
       <div className="audio-progress-wrap">
         <div className="audio-progress-labels">
-          <span>{Math.round(progress)}% listened</span>
-          <span>About {estimatedMinutes} min remaining</span>
+          <span>
+            {formatClock(elapsedEstimatedSeconds)} · {Math.round(displayedProgress)}%
+          </span>
+          <span>
+            -{formatClock(remainingEstimatedSeconds)} · about {estimatedMinutes} min
+          </span>
         </div>
-        <div className="audio-progress-track" aria-label="Listening progress">
-          <div className="audio-progress-fill" style={{ width: `${progress}%` }} />
+
+        <div className="audio-scrubber-wrap">
+          <input
+            className="audio-progress-scrubber"
+            type="range"
+            min="0"
+            max="100"
+            step="0.1"
+            value={displayedProgress}
+            aria-label="Seek through lesson narration"
+            onChange={(event) => setScrubProgress(Number(event.target.value))}
+            onPointerUp={(event) => commitScrub(Number(event.currentTarget.value))}
+            onKeyUp={(event) => {
+              if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) {
+                commitScrub(Number(event.currentTarget.value));
+              }
+            }}
+            onBlur={(event) => {
+              if (scrubProgress !== null) {
+                commitScrub(Number(event.currentTarget.value));
+              }
+            }}
+            disabled={!speechAvailable || !script.length}
+            style={{ "--audio-progress": `${displayedProgress}%` }}
+          />
         </div>
       </div>
 
-      <div className="audio-primary-controls">
+      <div className="audio-primary-controls audio-transport-controls">
         <button
-          className="audio-control-button secondary"
-          onClick={restartPlayback}
-          title="Restart lesson"
-          disabled={!speechAvailable}
+          className="audio-control-button audio-seek-button"
+          onClick={() => seekBySeconds(-SEEK_SECONDS)}
+          title={`Go back ${SEEK_SECONDS} seconds`}
+          aria-label={`Go back ${SEEK_SECONDS} seconds`}
+          disabled={!speechAvailable || !script.length || characterIndex <= 0}
         >
-          <RotateCcw size={20} />
+          <RotateCcw size={24} />
+          <span>{SEEK_SECONDS}</span>
         </button>
+
         <button
           className="audio-play-button"
           onClick={togglePlayback}
@@ -373,13 +534,35 @@ export default function AscendAudioPlayer({ lesson }) {
                     : "Listen"}
           </span>
         </button>
+
         <button
-          className="audio-control-button secondary"
-          onClick={stopPlayback}
-          title="Stop narration"
-          disabled={!speechAvailable}
+          className="audio-control-button audio-seek-button"
+          onClick={() => seekBySeconds(SEEK_SECONDS)}
+          title={`Skip forward ${SEEK_SECONDS} seconds`}
+          aria-label={`Skip forward ${SEEK_SECONDS} seconds`}
+          disabled={!speechAvailable || !script.length || characterIndex >= script.length}
         >
-          <Square size={18} fill="currentColor" />
+          <RotateCw size={24} />
+          <span>{SEEK_SECONDS}</span>
+        </button>
+      </div>
+
+      <div className="audio-secondary-actions">
+        <button
+          className="audio-text-action"
+          onClick={stopPlayback}
+          disabled={!speechAvailable || status === "idle"}
+        >
+          <Square size={14} fill="currentColor" />
+          Stop
+        </button>
+        <button
+          className="audio-text-action"
+          onClick={() => seekToCharacterIndex(0, { autoplay: status === "speaking" })}
+          disabled={!speechAvailable || characterIndex <= 0}
+        >
+          <RotateCcw size={15} />
+          Start over
         </button>
       </div>
 

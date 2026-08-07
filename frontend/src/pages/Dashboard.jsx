@@ -1,20 +1,19 @@
 import {
-  Award,
+  ArrowRight,
   BookOpenCheck,
   CheckCircle2,
-  FlaskConical,
   Headphones,
   Mountain,
-  Play,
   Presentation,
-  ScrollText,
+  Sparkles,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import AscendLogo from "../components/AscendLogo";
+import ContinueLearningCard from "../components/dashboard/ContinueLearningCard";
 import ProgressBar from "../components/ProgressBar";
-import StatCard from "../components/StatCard";
+import { WORKSHOP_SESSIONS } from "../data/workshopData";
 import { api } from "../services/api";
+import { getLearningSession } from "../services/learningSession";
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -23,9 +22,19 @@ function getGreeting() {
   return "Good evening";
 }
 
+function getSuggestedStep(session) {
+  const activeTab = session?.activeTab || "lesson";
+  if (activeTab === "audio") return "Continue your audio lesson";
+  if (activeTab === "lab") return "Continue the hands-on lab";
+  if (activeTab === "quiz") return "Finish the knowledge check";
+  if (activeTab === "reflection") return "Finish your reflection";
+  return "Continue your current lesson";
+}
+
 export default function Dashboard() {
   const [modules, setModules] = useState([]);
   const [progress, setProgress] = useState(null);
+  const [learningSession, setLearningSession] = useState(() => getLearningSession());
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -37,116 +46,190 @@ export default function Dashboard() {
       .catch((err) => setError(err.message));
   }, []);
 
+  useEffect(() => {
+    const refreshSession = () => setLearningSession(getLearningSession());
+    window.addEventListener("focus", refreshSession);
+    document.addEventListener("visibilitychange", refreshSession);
+    return () => {
+      window.removeEventListener("focus", refreshSession);
+      document.removeEventListener("visibilitychange", refreshSession);
+    };
+  }, []);
+
   const currentLesson = useMemo(() => {
-    const completed = new Set(progress?.completed_lessons || []);
-    for (const module of modules) {
-      for (const lesson of module.lessons || []) {
-        if (!completed.has(lesson.id)) return { ...lesson, moduleTitle: module.title, moduleNumber: module.number };
-      }
-    }
-    return modules[0]?.lessons?.[0];
-  }, [modules, progress]);
+    const flattenedLessons = modules.flatMap((module) =>
+      (module.lessons || []).map((lesson) => ({
+        ...lesson,
+        moduleTitle: module.title,
+        moduleNumber: module.number,
+      }))
+    );
+
+    const savedLesson = flattenedLessons.find(
+      (lesson) => String(lesson.id) === String(learningSession.lessonId)
+    );
+
+    if (savedLesson) return savedLesson;
+
+    const completed = new Set((progress?.completed_lessons || []).map(String));
+    return (
+      flattenedLessons.find((lesson) => !completed.has(String(lesson.id))) ||
+      flattenedLessons[0]
+    );
+  }, [learningSession.lessonId, modules, progress]);
+
+  const latestWorkshop = WORKSHOP_SESSIONS.at(-1);
+  const nextModule = modules.find((module) => module.status === "active") || modules[0];
 
   if (error) return <div className="error-card">{error}</div>;
   if (!progress) return <div className="loading-card">Preparing your ascent...</div>;
 
   return (
-    <div className="page-stack">
-      <section className="hero-panel ascend-hero">
-        <div className="hero-copy">
+    <div className="page-stack dashboard-v2">
+      <section className="dashboard-welcome">
+        <div>
           <span className="eyebrow">{getGreeting()}, Bryant</span>
-          <h1>Keep Climbing.</h1>
+          <h1>What&apos;s your next step?</h1>
           <p>
-            Every lesson, lab, workshop, and reflection is another step toward the engineer you are becoming.
+            Ascend remembers where you stopped so you can spend your time learning instead of finding your place.
           </p>
         </div>
-        <div className="mountain-visual" aria-hidden="true">
-          <div className="altitude-line altitude-one" />
-          <div className="altitude-line altitude-two" />
-          <div className="altitude-line altitude-three" />
-          <AscendLogo />
-          <span>{progress.percent}% ASCENDED</span>
+        <div className="dashboard-altitude">
+          <span>{progress.percent}%</span>
+          <small>Journey complete</small>
         </div>
-
-        {currentLesson && (
-          <div className="hero-actions">
-            <Link className="primary-button" to={`/lessons/${currentLesson.id}`}>
-              <Play size={18} />
-              Continue learning
-            </Link>
-            <Link className="secondary-button" to="/modules">
-              View journey
-            </Link>
-          </div>
-        )}
       </section>
 
-      <section className="stats-grid">
-        <StatCard icon={Mountain} label="Current level" value={progress.level} helper={`${progress.xp} XP earned`} />
-        <StatCard icon={BookOpenCheck} label="Lessons complete" value={`${progress.completed_count}/${progress.total_lessons}`} helper={`${progress.percent}% overall`} />
-        <StatCard icon={Award} label="Achievements" value={progress.achievements.length} helper="Milestones unlocked" />
-        <StatCard icon={Headphones} label="Available lessons" value={progress.total_lessons} helper="Read, listen, build" />
-      </section>
+      <section className="dashboard-primary-grid">
+        <ContinueLearningCard lesson={currentLesson} session={learningSession} />
 
-      <section className="content-grid dashboard-grid">
-        <article className="panel continue-panel">
-          <div className="panel-heading">
+        <article className="today-climb-card">
+          <div className="today-climb-heading">
+            <span className="today-climb-icon"><Sparkles size={19} /></span>
             <div>
-              <span className="eyebrow">NEXT STEP</span>
-              <h2>{currentLesson?.title || "Available journey complete"}</h2>
+              <span className="eyebrow">TODAY&apos;S CLIMB</span>
+              <h2>Keep the momentum.</h2>
             </div>
-            <span className="status-pill">Module {currentLesson?.moduleNumber ?? "—"}</span>
           </div>
-          <p>{currentLesson?.summary}</p>
-          <div className="lesson-context">
-            <span>{currentLesson?.moduleTitle}</span>
-            <span>{currentLesson?.duration_minutes || 0} min</span>
-            <span>+{currentLesson?.xp || 0} XP</span>
-          </div>
-          {currentLesson && <Link className="primary-button" to={`/lessons/${currentLesson.id}`}><Play size={17} /> Resume lesson</Link>}
-        </article>
 
-        <article className="panel progress-panel">
-          <div className="panel-heading">
+          <div className="today-climb-list">
+            <div className="today-climb-step active">
+              <span>1</span>
+              <div>
+                <strong>{getSuggestedStep(learningSession)}</strong>
+                <small>{currentLesson?.title}</small>
+              </div>
+            </div>
+            <div className="today-climb-step">
+              <span>2</span>
+              <div>
+                <strong>Practice what you learned</strong>
+                <small>Use the lesson lab when you are ready.</small>
+              </div>
+            </div>
+            <div className="today-climb-step">
+              <span>3</span>
+              <div>
+                <strong>Capture the takeaway</strong>
+                <small>Reflection turns a lesson into something you can explain.</small>
+              </div>
+            </div>
+          </div>
+
+          <Link className="text-link-arrow" to={currentLesson ? `/lessons/${currentLesson.id}` : "/modules"}>
+            Open today&apos;s lesson <ArrowRight size={16} />
+          </Link>
+        </article>
+      </section>
+
+      <section className="dashboard-overview-grid">
+        <article className="panel ascent-overview-card">
+          <div className="panel-heading compact-heading">
             <div>
               <span className="eyebrow">YOUR ASCENT</span>
-              <h2>Overall journey</h2>
+              <h2>Journey progress</h2>
             </div>
             <strong className="progress-number">{progress.percent}%</strong>
           </div>
           <ProgressBar value={progress.percent} />
-          <div className="roadmap-list">
-            {modules.slice(0, 4).map((module) => (
-              <div className="roadmap-row" key={module.id}>
-                <span className={`module-dot ${module.status}`} />
-                <div>
-                  <strong>Module {module.number}: {module.title}</strong>
-                  <small>{module.subtitle}</small>
-                </div>
-              </div>
-            ))}
+
+          <div className="ascent-metrics">
+            <div>
+              <Mountain size={18} />
+              <span>Level</span>
+              <strong>{progress.level}</strong>
+            </div>
+            <div>
+              <BookOpenCheck size={18} />
+              <span>Lessons</span>
+              <strong>{progress.completed_count}/{progress.total_lessons}</strong>
+            </div>
+            <div>
+              <Headphones size={18} />
+              <span>XP</span>
+              <strong>{progress.xp}</strong>
+            </div>
           </div>
+
+          {nextModule && (
+            <div className="current-module-row">
+              <span className="module-dot active" />
+              <div>
+                <small>Current focus</small>
+                <strong>Module {nextModule.number}: {nextModule.title}</strong>
+              </div>
+              <Link to="/modules" aria-label="View Journey"><ArrowRight size={18} /></Link>
+            </div>
+          )}
+        </article>
+
+        <article className="panel workshop-preview-card">
+          <div className="workshop-preview-icon"><Presentation size={22} /></div>
+          <span className="eyebrow">DEVOPS WORKSHOP</span>
+          <h2>{latestWorkshop?.title || "Real-world learning"}</h2>
+          <p>
+            {latestWorkshop?.summary || "Connect your weekly mentoring sessions to the concepts you are learning in The Journey."}
+          </p>
+          {latestWorkshop && (
+            <div className="workshop-preview-meta">
+              <span>Session {latestWorkshop.number}</span>
+              <span>{latestWorkshop.date}</span>
+            </div>
+          )}
+          <Link className="secondary-button" to={latestWorkshop ? `/workshop/sessions/${latestWorkshop.id}` : "/workshop"}>
+            Review workshop <ArrowRight size={16} />
+          </Link>
         </article>
       </section>
 
-      <section className="platform-grid">
-        <Link className="platform-card active-platform" to="/modules">
-          <BookOpenCheck size={22} /><span className="eyebrow">JOURNEY</span><strong>Structured curriculum</strong><p>Follow your DevOps learning path.</p>
+      <section className="learning-spaces-row">
+        <Link className="learning-space-card journey-space" to="/modules">
+          <BookOpenCheck size={22} />
+          <div>
+            <span className="eyebrow">THE JOURNEY</span>
+            <strong>Structured DevOps curriculum</strong>
+            <p>Learn the fundamentals in an intentional sequence.</p>
+          </div>
+          <ArrowRight size={18} />
         </Link>
-        <Link className="platform-card" to="/workshop">
-          <Presentation size={22} /><span className="eyebrow">WORKSHOP</span><strong>Learn from Travis</strong><p>Connect meetings to lessons and actions.</p>
-        </Link>
-        <Link className="platform-card" to="/labs">
-          <FlaskConical size={22} /><span className="eyebrow">LABS</span><strong>Build and troubleshoot</strong><p>Turn knowledge into repeatable skill.</p>
-        </Link>
-        <Link className="platform-card" to="/handbook">
-          <ScrollText size={22} /><span className="eyebrow">HANDBOOK</span><strong>Keep what you learn</strong><p>Create your engineering reference.</p>
+
+        <Link className="learning-space-card workshop-space" to="/workshop">
+          <Presentation size={22} />
+          <div>
+            <span className="eyebrow">DEVOPS WORKSHOP</span>
+            <strong>Real-world mentoring</strong>
+            <p>Review sessions, practice labs, and prepare questions.</p>
+          </div>
+          <ArrowRight size={18} />
         </Link>
       </section>
 
-      <section className="panel climb-principle">
+      <section className="panel climb-principle dashboard-principle">
         <CheckCircle2 size={22} />
-        <div><span className="eyebrow">TODAY'S PRINCIPLE</span><strong>You do not need to reach the summit today. You only need to take the next step.</strong></div>
+        <div>
+          <span className="eyebrow">ASCEND PRINCIPLE</span>
+          <strong>You do not need to finish the mountain today. You only need the next deliberate step.</strong>
+        </div>
       </section>
     </div>
   );

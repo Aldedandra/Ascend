@@ -10,7 +10,6 @@ import {
   NotebookPen,
   Presentation,
   Route,
-  ScrollText,
   X,
 } from "lucide-react";
 import { useState } from "react";
@@ -88,19 +87,27 @@ export default function Layout() {
     <div className="app-shell">
       <aside className={`sidebar ${open ? "sidebar-open" : ""}`}>
         <div className="brand">
-          <div className="brand-mark">
-            <AscendLogo compact />
+          <div className="brand-header">
+            <div className="brand-identity" aria-label="Ascend">
+              <div className="brand-mark">
+                <AscendLogo compact />
+              </div>
+              <div className="brand-copy">
+                <strong>ASCEND</strong>
+                <span>Keep climbing.</span>
+              </div>
+            </div>
+
+            <button
+              className="icon-button sidebar-close"
+              onClick={() => setOpen(false)}
+              aria-label="Close navigation"
+            >
+              <X size={20} />
+            </button>
           </div>
 
           <WorkspaceSwitcher onNavigate={() => setOpen(false)} />
-
-          <button
-            className="icon-button sidebar-close"
-            onClick={() => setOpen(false)}
-            aria-label="Close navigation"
-          >
-            <X size={20} />
-          </button>
         </div>
 
         <nav className="nav-list">

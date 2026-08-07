@@ -10,15 +10,15 @@ import { useLocation, useNavigate } from "react-router-dom";
 const workspaces = [
   {
     id: "curriculum",
-    title: "Ascend Curriculum",
-    subtitle: "Structured DevOps journey",
+    title: "The Journey",
+    subtitle: "Core DevOps curriculum",
     icon: BookOpen,
     path: "/",
   },
   {
     id: "workshop",
     title: "DevOps Workshop",
-    subtitle: "Sessions with Travis",
+    subtitle: "Real-world sessions with Travis",
     icon: Presentation,
     path: "/workshop",
   },
@@ -62,6 +62,8 @@ export default function WorkspaceSwitcher({ onNavigate }) {
 
   return (
     <div className="workspace-switcher" ref={menuRef}>
+      <span className="workspace-kicker">Learning space</span>
+
       <button
         type="button"
         className={`workspace-trigger ${open ? "open" : ""}`}
@@ -70,7 +72,7 @@ export default function WorkspaceSwitcher({ onNavigate }) {
         aria-haspopup="menu"
       >
         <span className="workspace-trigger-icon">
-          <ActiveIcon size={19} />
+          <ActiveIcon size={18} />
         </span>
 
         <span className="workspace-trigger-copy">
@@ -87,7 +89,7 @@ export default function WorkspaceSwitcher({ onNavigate }) {
 
       {open && (
         <div className="workspace-menu" role="menu">
-          <span className="workspace-menu-label">Switch workspace</span>
+          <span className="workspace-menu-label">Choose learning space</span>
 
           {workspaces.map((workspace) => {
             const Icon = workspace.icon;
@@ -102,7 +104,7 @@ export default function WorkspaceSwitcher({ onNavigate }) {
                 role="menuitem"
               >
                 <span className="workspace-option-icon">
-                  <Icon size={19} />
+                  <Icon size={18} />
                 </span>
 
                 <span className="workspace-option-copy">
