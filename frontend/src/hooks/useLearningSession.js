@@ -4,6 +4,11 @@ import {
   getLearningSession,
   saveLearningSession,
 } from "../services/learningSession";
+import {
+  cancelResumeLearningReminder,
+  scheduleResumeLearningReminder,
+} from "../services/ascendNotifications";
+import { getNotificationPreferences } from "../services/notificationPreferences";
 
 export default function useLearningSession(lessonId) {
   const [session, setSession] = useState(() => beginLessonSession(lessonId));
@@ -56,6 +61,30 @@ export default function useLearningSession(lessonId) {
       audioProgress: Number(progress) || 0,
     });
     setSession(next);
+  }, [lessonId]);
+
+  useEffect(() => {
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === "hidden") {
+        try {
+          const prefs = getNotificationPreferences();
+          if (prefs.resumeEnabled) {
+            await scheduleResumeLearningReminder(prefs.resumeDelayMinutes);
+          }
+        } catch {
+          // Notification scheduling should never interrupt learning.
+        }
+      } else if (document.visibilityState === "visible") {
+        try {
+          await cancelResumeLearningReminder();
+        } catch {
+          // Safe no-op if native notifications are unavailable.
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, [lessonId]);
 
   const refresh = useCallback(() => setSession(getLearningSession()), []);

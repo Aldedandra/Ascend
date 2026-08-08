@@ -4,9 +4,9 @@
   justify-content: space-between;
   gap: 18px;
   padding: 17px;
-  border: 1px solid rgba(41, 211, 232, 0.16);
+  border: 1px solid rgba(22, 140, 255, 0.16);
   border-radius: 15px;
-  background: rgba(41, 211, 232, 0.045);
+  background: rgba(22, 140, 255, 0.045);
 }
 
 .audio-narrator-copy {
@@ -18,7 +18,7 @@
 
 .audio-narrator-copy > svg {
   flex: 0 0 auto;
-  color: #78eef4;
+  color: #68dfff;
 }
 
 .audio-narrator-copy span,
@@ -58,7 +58,7 @@
   border: 1px solid var(--border);
   border-radius: 11px;
   color: var(--text);
-  background: #080d19;
+  background: #060d18;
   cursor: pointer;
 }
 

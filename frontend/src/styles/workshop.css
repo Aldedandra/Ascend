@@ -78,8 +78,8 @@
 
 .workspace-trigger:hover,
 .workspace-trigger.open {
-  background: rgba(41, 211, 232, 0.07);
-  border-color: rgba(41, 211, 232, 0.2);
+  background: rgba(22, 140, 255, 0.07);
+  border-color: rgba(22, 140, 255, 0.2);
 }
 
 .workspace-trigger:active {
@@ -94,9 +94,9 @@
   align-items: center;
   justify-content: center;
   border-radius: 11px;
-  color: #78eef4;
-  background: rgba(41, 211, 232, 0.1);
-  border: 1px solid rgba(41, 211, 232, 0.14);
+  color: #68dfff;
+  background: rgba(22, 140, 255, 0.1);
+  border: 1px solid rgba(22, 140, 255, 0.14);
 }
 
 /* Force the Lucide glyph itself to the visual center of each workspace tile.
@@ -165,7 +165,7 @@
   min-width: 250px;
   z-index: 80;
   padding: 9px;
-  border: 1px solid rgba(41, 211, 232, 0.18);
+  border: 1px solid rgba(22, 140, 255, 0.18);
   border-radius: 16px;
   background: rgba(6, 18, 23, 0.985);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.48);
@@ -199,8 +199,8 @@
 
 .workspace-option:hover,
 .workspace-option.active {
-  background: rgba(41, 211, 232, 0.08);
-  border-color: rgba(41, 211, 232, 0.14);
+  background: rgba(22, 140, 255, 0.08);
+  border-color: rgba(22, 140, 255, 0.14);
 }
 
 .workspace-option-icon {
@@ -234,8 +234,8 @@
   border: 1px solid var(--border);
   border-radius: 24px;
   background:
-    radial-gradient(circle at 85% 12%, rgba(41, 211, 232, 0.2), transparent 27%),
-    linear-gradient(125deg, rgba(41, 211, 232, 0.13), transparent 47%),
+    radial-gradient(circle at 85% 12%, rgba(22, 140, 255, 0.2), transparent 27%),
+    linear-gradient(125deg, rgba(22, 140, 255, 0.13), transparent 47%),
     var(--surface);
   box-shadow: var(--shadow);
 }
@@ -263,11 +263,11 @@
   flex: 0 0 auto;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(41, 211, 232, 0.18);
+  border: 1px solid rgba(22, 140, 255, 0.18);
   border-radius: 50%;
-  color: #78eef4;
+  color: #68dfff;
   background:
-    radial-gradient(circle, rgba(41, 211, 232, 0.13), transparent 66%);
+    radial-gradient(circle, rgba(22, 140, 255, 0.13), transparent 66%);
 }
 
 .workshop-hero-mark::before,
@@ -275,14 +275,14 @@
   content: "";
   position: absolute;
   inset: 16%;
-  border: 1px solid rgba(41, 211, 232, 0.25);
+  border: 1px solid rgba(22, 140, 255, 0.25);
   border-radius: 50%;
   transform: scaleY(0.5) rotate(28deg);
 }
 
 .workshop-hero-mark::after {
   transform: scaleY(0.5) rotate(-28deg);
-  border-color: rgba(23, 185, 200, 0.18);
+  border-color: rgba(85, 216, 255, 0.18);
 }
 
 .workshop-hero-mark > svg {
@@ -361,7 +361,7 @@
   border: 1px solid var(--border);
   border-radius: 19px;
   background:
-    linear-gradient(145deg, rgba(41, 211, 232, 0.07), transparent 45%),
+    linear-gradient(145deg, rgba(22, 140, 255, 0.07), transparent 45%),
     var(--surface);
   transition:
     transform 0.18s ease,
@@ -371,9 +371,9 @@
 
 .workshop-area-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(41, 211, 232, 0.27);
+  border-color: rgba(22, 140, 255, 0.27);
   background:
-    linear-gradient(145deg, rgba(41, 211, 232, 0.11), transparent 48%),
+    linear-gradient(145deg, rgba(22, 140, 255, 0.11), transparent 48%),
     var(--surface);
 }
 
@@ -381,9 +381,9 @@
 .workshop-empty-icon {
   display: grid;
   place-items: center;
-  color: #78eef4;
-  background: rgba(41, 211, 232, 0.1);
-  border: 1px solid rgba(41, 211, 232, 0.17);
+  color: #68dfff;
+  background: rgba(22, 140, 255, 0.1);
+  border: 1px solid rgba(22, 140, 255, 0.17);
 }
 
 .workshop-area-icon {
@@ -407,7 +407,7 @@
   align-items: center;
   gap: 22px;
   background:
-    linear-gradient(135deg, rgba(41, 211, 232, 0.07), transparent 43%),
+    linear-gradient(135deg, rgba(22, 140, 255, 0.07), transparent 43%),
     var(--surface);
 }
 
@@ -432,7 +432,7 @@
 }
 
 .workshop-preview-card > svg {
-  color: #78eef4;
+  color: #68dfff;
 }
 
 .workshop-preview-card strong {
@@ -458,7 +458,7 @@
 }
 
 .workshop-question-card > svg:first-child {
-  color: #78eef4;
+  color: #68dfff;
 }
 
 .workshop-question-card > svg:last-child {

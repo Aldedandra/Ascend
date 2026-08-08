@@ -5,6 +5,7 @@ import {
   CalendarDays,
   FlaskConical,
   Gauge,
+  Bell,
   Menu,
   MessageCircleQuestion,
   NotebookPen,
@@ -22,7 +23,8 @@ const curriculumGroups = [
     label: "Climb",
     items: [
       { to: "/", label: "Dashboard", icon: Gauge },
-      { to: "/modules", label: "Journey", icon: BookOpen },
+      { to: "/journey", label: "Journey", icon: Route },
+      { to: "/modules", label: "Modules", icon: BookOpen },
     ],
   },
   {
@@ -31,6 +33,7 @@ const curriculumGroups = [
       { to: "/journal", label: "Journal", icon: NotebookPen },
       { to: "/portfolio", label: "Portfolio", icon: Award },
       { to: "/progress", label: "Progress", icon: Route },
+      { to: "/notifications", label: "Notifications", icon: Bell },
     ],
   },
 ];
@@ -94,7 +97,7 @@ export default function Layout() {
               </div>
               <div className="brand-copy">
                 <strong>ASCEND</strong>
-                <span>Keep climbing.</span>
+                <span>Elevate every day.</span>
               </div>
             </div>
 

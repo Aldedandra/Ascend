@@ -7,21 +7,37 @@ export default function AscendLogo({ className = "", compact = false }) {
       aria-label="Ascend logo"
     >
       <defs>
-        <linearGradient id="ascendPeak" x1="24" y1="18" x2="136" y2="142" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#B9FBFF" />
-          <stop offset="0.48" stopColor="#29D3E8" />
-          <stop offset="1" stopColor="#0A8FA4" />
+        <linearGradient id="ascendOuter" x1="80" y1="18" x2="80" y2="142" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#63D1FF" />
+          <stop offset="0.44" stopColor="#16A6FF" />
+          <stop offset="1" stopColor="#1356C9" />
         </linearGradient>
-        <linearGradient id="ascendShadow" x1="80" y1="32" x2="80" y2="140" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#35D4E8" />
-          <stop offset="1" stopColor="#0A5E6C" />
+        <linearGradient id="ascendInner" x1="80" y1="64" x2="80" y2="140" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#44C7FF" />
+          <stop offset="0.56" stopColor="#148EF4" />
+          <stop offset="1" stopColor="#0C4EBA" />
         </linearGradient>
       </defs>
-      <path d="M80 18 140 112 80 76 20 112 80 18Z" fill="url(#ascendPeak)" />
-      <path d="M80 18v58l60 36-34-53L80 18Z" fill="#E6FEFF" fillOpacity="0.23" />
-      <path d="M80 84 126 113 80 98 34 113 80 84Z" fill="url(#ascendShadow)" />
-      <path d="M80 106 115 129 80 117 45 129 80 106Z" fill="url(#ascendShadow)" opacity="0.88" />
-      {!compact && <circle cx="80" cy="80" r="73" fill="none" stroke="#29D3E8" strokeOpacity="0.12" />}
+
+      <path
+        d="M80 16 143 137h-23L80 59 40 137H17L80 16Z"
+        fill="url(#ascendOuter)"
+      />
+      <path
+        d="M80 72 123 137h-24L80 108 61 137H37L80 72Z"
+        fill="url(#ascendInner)"
+      />
+
+      {!compact && (
+        <circle
+          cx="80"
+          cy="80"
+          r="74"
+          fill="none"
+          stroke="#2BAEFF"
+          strokeOpacity="0.10"
+        />
+      )}
     </svg>
   );
 }

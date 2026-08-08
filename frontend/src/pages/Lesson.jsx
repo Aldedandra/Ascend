@@ -9,6 +9,8 @@ import {
   ListChecks,
   Network,
   ArrowDown,
+  ArrowLeft,
+  ArrowRight,
 } from "lucide-react";
 import {
   useEffect,
@@ -25,6 +27,11 @@ import {
 } from "../services/api";
 import AscendAudioPlayer from "../components/AscendAudioPlayer";
 import useLearningSession from "../hooks/useLearningSession";
+import {
+  cancelResumeLearningReminder,
+  sendMilestoneNotification,
+} from "../services/ascendNotifications";
+import { getNotificationPreferences } from "../services/notificationPreferences";
 
 
 function LessonDiagram({ diagram }) {
@@ -197,6 +204,8 @@ export default function Lesson() {
     setNextLesson,
   ] = useState(null);
 
+  const [lessonNavigation, setLessonNavigation] = useState({ previous: null, next: null, module: null });
+
   useEffect(() => {
     let cancelled = false;
 
@@ -207,6 +216,7 @@ export default function Lesson() {
     setError("");
     setJustCompleted(false);
     setNextLesson(null);
+    setLessonNavigation({ previous: null, next: null, module: null });
 
     api
       .getLesson(lessonId)
@@ -232,6 +242,22 @@ export default function Lesson() {
     };
   }, [lessonId]);
 
+  useEffect(() => {
+    let cancelled = false;
+    api.getModules().then((modules) => {
+      if (cancelled) return;
+      const lessons = modules.flatMap((module) => module.lessons || []);
+      const index = lessons.findIndex((item) => item.id === lessonId);
+      const module = modules.find((item) => (item.lessons || []).some((candidate) => candidate.id === lessonId));
+      setLessonNavigation({
+        previous: index > 0 ? lessons[index - 1] : null,
+        next: index >= 0 && index < lessons.length - 1 ? lessons[index + 1] : null,
+        module: module || null,
+      });
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [lessonId]);
+
   const coachPrompt = useMemo(() => {
     if (!lesson) {
       return "";
@@ -245,31 +271,29 @@ export default function Lesson() {
     );
   }, [lesson]);
 
-  const findNextLesson = async (
-    currentLessonId
-  ) => {
-    const modules =
-      await api.getModules();
+  const getCompletionContext = async (currentLessonId) => {
+    const [modules, progress] = await Promise.all([
+      api.getModules(),
+      api.getProgress(),
+    ]);
 
-    const lessons = modules.flatMap(
-      (module) =>
-        module.lessons || []
+    const lessons = modules.flatMap((module) => module.lessons || []);
+    const currentIndex = lessons.findIndex((item) => item.id === currentLessonId);
+    const nextLesson =
+      currentIndex >= 0 && currentIndex < lessons.length - 1
+        ? lessons[currentIndex + 1]
+        : null;
+
+    const currentModule = modules.find((module) =>
+      (module.lessons || []).some((item) => item.id === currentLessonId)
+    );
+    const completedIds = new Set(progress.completed_lessons || []);
+    const moduleCompleted = Boolean(
+      currentModule?.lessons?.length &&
+      currentModule.lessons.every((item) => completedIds.has(item.id))
     );
 
-    const currentIndex =
-      lessons.findIndex(
-        (item) =>
-          item.id === currentLessonId
-      );
-
-    if (
-      currentIndex >= 0 &&
-      currentIndex < lessons.length - 1
-    ) {
-      return lessons[currentIndex + 1];
-    }
-
-    return null;
+    return { nextLesson, currentModule, moduleCompleted };
   };
 
   const copyPrompt = async () => {
@@ -312,16 +336,31 @@ export default function Lesson() {
       }));
 
       if (completing) {
-        const followingLesson =
-          await findNextLesson(
-            lesson.id
-          );
+        const {
+          nextLesson: followingLesson,
+          currentModule,
+          moduleCompleted,
+        } = await getCompletionContext(lesson.id);
 
-        setNextLesson(
-          followingLesson
-        );
-
+        setNextLesson(followingLesson);
         setJustCompleted(true);
+
+        // A completed lesson should never leave a stale "resume" nudge behind.
+        cancelResumeLearningReminder().catch(() => {});
+
+        const notificationPreferences = getNotificationPreferences();
+        if (notificationPreferences.milestoneEnabled) {
+          const title = moduleCompleted ? "Module Complete" : "Lesson Complete";
+          const body = moduleCompleted
+            ? `${currentModule?.title || "Your module"} complete. Another stage of your ascent is behind you.`
+            : `${lesson.title} complete. +${lesson.xp} XP — keep climbing.`;
+
+          sendMilestoneNotification({
+            id: `ascend.milestone.${moduleCompleted ? "module" : "lesson"}.${lesson.id}.${Date.now()}`,
+            title,
+            body,
+          }).catch(() => {});
+        }
       } else {
         setJustCompleted(false);
         setNextLesson(null);
@@ -414,7 +453,7 @@ export default function Lesson() {
           navigate("/modules")
         }
       >
-        ← Back to modules
+        ← Back to Modules
       </button>
 
       <header className="lesson-hero">
@@ -761,6 +800,22 @@ export default function Lesson() {
           </article>
         </section>
       )}
+
+      <nav className="lesson-sequence-nav" aria-label="Lesson navigation">
+        {lessonNavigation.previous ? (
+          <button className="lesson-sequence-button previous" onClick={() => navigate(`/lessons/${lessonNavigation.previous.id}`)}>
+            <ArrowLeft size={18} /><span><small>PREVIOUS LESSON</small><strong>{lessonNavigation.previous.title}</strong></span>
+          </button>
+        ) : <span className="lesson-sequence-spacer" />}
+        <button className="lesson-module-button" onClick={() => navigate("/modules")}>
+          {lessonNavigation.module ? `Module ${lessonNavigation.module.number}` : "All Modules"}
+        </button>
+        {lessonNavigation.next ? (
+          <button className="lesson-sequence-button next" onClick={() => navigate(`/lessons/${lessonNavigation.next.id}`)}>
+            <span><small>NEXT LESSON</small><strong>{lessonNavigation.next.title}</strong></span><ArrowRight size={18} />
+          </button>
+        ) : <span className="lesson-sequence-spacer" />}
+      </nav>
     </div>
   );
 }
