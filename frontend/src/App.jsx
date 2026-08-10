@@ -1,3 +1,5 @@
+import { Capacitor } from "@capacitor/core";
+import { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import LaunchTransition from "./components/LaunchTransition";
 import Layout from "./components/Layout";
@@ -9,6 +11,7 @@ import Modules from "./pages/Modules";
 import Notifications from "./pages/Notifications";
 import Portfolio from "./pages/Portfolio";
 import Progress from "./pages/Progress";
+import VoiceStudio from "./pages/VoiceStudio";
 import WorkshopDashboard from "./pages/workshop/WorkshopDashboard";
 import WorkshopHandbook from "./pages/workshop/WorkshopHandbook";
 import WorkshopLabs from "./pages/workshop/WorkshopLabs";
@@ -17,9 +20,16 @@ import WorkshopSessionDetail from "./pages/workshop/WorkshopSessionDetail";
 import WorkshopSessions from "./pages/workshop/WorkshopSessions";
 
 export default function App() {
+  const showNativeLaunchTransition = Capacitor.isNativePlatform();
+
+  useEffect(() => {
+    document.body.classList.toggle("ascend-native", showNativeLaunchTransition);
+    return () => document.body.classList.remove("ascend-native");
+  }, [showNativeLaunchTransition]);
+
   return (
     <>
-      <LaunchTransition />
+      {showNativeLaunchTransition ? <LaunchTransition /> : null}
 
       <Routes>
         <Route element={<Layout />}>
@@ -31,6 +41,7 @@ export default function App() {
           <Route path="/journal" element={<Journal />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/voice-studio" element={<VoiceStudio />} />
 
           <Route path="/workshop" element={<WorkshopDashboard />} />
           <Route path="/workshop/sessions" element={<WorkshopSessions />} />

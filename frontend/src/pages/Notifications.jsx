@@ -32,6 +32,7 @@ export default function Notifications() {
   const [pendingDaily, setPendingDaily] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [draftDailyTime, setDraftDailyTime] = useState(() => getNotificationPreferences().dailyTime);
 
   const refreshStatus = async () => {
     if (!native) {
@@ -138,23 +139,50 @@ export default function Notifications() {
     }
   };
 
-  const changeTime = async (value) => {
-    const next = { ...preferences, dailyTime: value };
+  const applyDailyTime = async () => {
+    const next = { ...preferences, dailyTime: draftDailyTime };
     savePreferences(next);
 
-    if (!preferences.dailyEnabled || !native) return;
+    if (!native) return;
+
+    if (!preferences.dailyEnabled) {
+      setMessage(`Reminder time saved as ${formatTime(draftDailyTime)}. Turn the daily reminder on when you are ready.`);
+      return;
+    }
 
     setBusy(true);
+    setMessage("");
     try {
-      const [hour, minute] = value.split(":").map(Number);
+      const [hour, minute] = draftDailyTime.split(":").map(Number);
       await scheduleDailyLearningReminder(hour, minute);
       setPendingDaily(true);
-      setMessage(`Reminder moved to ${formatTime(value)}.`);
+      setMessage(`Reminder moved to ${formatTime(draftDailyTime)}.`);
     } catch (error) {
       setMessage(error.message || "Unable to change the reminder time.");
     } finally {
       setBusy(false);
     }
+  };
+
+  const updateNativeTimePart = (part, value) => {
+    const [hour24, minute] = draftDailyTime.split(":").map(Number);
+    const currentPeriod = hour24 >= 12 ? "PM" : "AM";
+    const currentHour12 = hour24 % 12 || 12;
+
+    let nextHour12 = currentHour12;
+    let nextMinute = minute;
+    let nextPeriod = currentPeriod;
+
+    if (part === "hour") nextHour12 = Number(value);
+    if (part === "minute") nextMinute = Number(value);
+    if (part === "period") nextPeriod = value;
+
+    let nextHour24 = nextHour12 % 12;
+    if (nextPeriod === "PM") nextHour24 += 12;
+
+    setDraftDailyTime(
+      `${String(nextHour24).padStart(2, "0")}:${String(nextMinute).padStart(2, "0")}`
+    );
   };
 
   return (
@@ -235,18 +263,75 @@ export default function Notifications() {
           </label>
         </div>
 
-        <div className="notification-time-row">
-          <label htmlFor="daily-reminder-time">Reminder time</label>
-          <div className="notification-time-input-wrap">
-            <input
-              id="daily-reminder-time"
-              type="time"
-              value={preferences.dailyTime}
-              onChange={(event) => changeTime(event.target.value)}
-              disabled={busy || !native}
-            />
+        <div className="notification-time-row notification-time-editor">
+          <div className="notification-time-copy">
+            <label htmlFor={native ? "daily-reminder-hour" : "daily-reminder-time"}>Reminder time</label>
+            <small>Choose the full time, then tap Save time.</small>
           </div>
-          <small>{formatTime(preferences.dailyTime)} every day</small>
+
+          {native ? (
+            <div className="notification-native-time-controls" aria-label="Daily reminder time">
+              <div className="notification-select-wrap notification-time-select">
+                <select
+                  id="daily-reminder-hour"
+                  value={toTwelveHour(draftDailyTime).hour}
+                  onChange={(event) => updateNativeTimePart("hour", event.target.value)}
+                  disabled={busy}
+                  aria-label="Hour"
+                >
+                  {Array.from({ length: 12 }, (_, index) => index + 1).map((hour) => (
+                    <option key={hour} value={hour}>{hour}</option>
+                  ))}
+                </select>
+              </div>
+              <span className="notification-time-colon">:</span>
+              <div className="notification-select-wrap notification-time-select">
+                <select
+                  value={toTwelveHour(draftDailyTime).minute}
+                  onChange={(event) => updateNativeTimePart("minute", event.target.value)}
+                  disabled={busy}
+                  aria-label="Minute"
+                >
+                  {Array.from({ length: 60 }, (_, minute) => minute).map((minute) => (
+                    <option key={minute} value={minute}>{String(minute).padStart(2, "0")}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="notification-select-wrap notification-time-period">
+                <select
+                  value={toTwelveHour(draftDailyTime).period}
+                  onChange={(event) => updateNativeTimePart("period", event.target.value)}
+                  disabled={busy}
+                  aria-label="AM or PM"
+                >
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </div>
+            </div>
+          ) : (
+            <div className="notification-time-input-wrap">
+              <input
+                id="daily-reminder-time"
+                type="time"
+                value={draftDailyTime}
+                onChange={(event) => setDraftDailyTime(event.target.value)}
+                disabled={busy}
+              />
+            </div>
+          )}
+
+          <div className="notification-time-actions">
+            <small>{formatTime(draftDailyTime)} every day</small>
+            <button
+              className="secondary-button notification-save-time"
+              type="button"
+              onClick={applyDailyTime}
+              disabled={busy || !native || draftDailyTime === preferences.dailyTime}
+            >
+              Save time
+            </button>
+          </div>
         </div>
       </section>
 
@@ -374,6 +459,15 @@ export default function Notifications() {
 
     </div>
   );
+}
+
+function toTwelveHour(value) {
+  const [hour24, minute] = value.split(":").map(Number);
+  return {
+    hour: hour24 % 12 || 12,
+    minute,
+    period: hour24 >= 12 ? "PM" : "AM",
+  };
 }
 
 function formatTime(value) {

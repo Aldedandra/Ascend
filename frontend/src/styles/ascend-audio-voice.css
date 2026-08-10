@@ -101,3 +101,22 @@
     width: 100%;
   }
 }
+
+
+/* ElevenLabs lesson player — Package 09C */
+.elevenlabs-preparing{display:flex;align-items:center;gap:12px;padding:16px;border:1px solid rgba(64,170,255,.16);border-radius:14px;background:rgba(32,100,220,.055);color:var(--muted)}
+.elevenlabs-preparing strong,.elevenlabs-preparing span{display:block}.elevenlabs-preparing strong{color:var(--text);margin-bottom:3px}.elevenlabs-preparing span{font-size:.82rem}
+.elevenlabs-playback-settings{margin-top:14px;border-top:1px solid var(--border);padding-top:12px}
+.elevenlabs-playback-settings>summary{cursor:pointer;color:#9fc9ed;font-weight:700;font-size:.84rem;list-style:none}
+.elevenlabs-playback-settings>summary::-webkit-details-marker{display:none}
+.elevenlabs-playback-settings>summary::after{content:"›";display:inline-block;margin-left:7px;transition:transform .18s ease}
+.elevenlabs-playback-settings[open]>summary::after{transform:rotate(90deg)}
+.elevenlabs-playback-settings .audio-narrator-panel{margin-top:12px}
+.elevenlabs-now-playing{margin-bottom:2px}
+@media(max-width:600px){
+  .elevenlabs-player .ascend-audio-heading{margin-bottom:12px}
+  .elevenlabs-player .audio-now-reading{padding:11px 12px}
+  .elevenlabs-player .audio-primary-controls{margin-top:14px}
+  .elevenlabs-player .audio-secondary-actions{margin-top:7px}
+  .elevenlabs-playback-settings{margin-top:10px}
+}

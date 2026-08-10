@@ -328,3 +328,62 @@
   .milestone-detail { padding: 18px; }
   .journey-v2-extension-grid { grid-template-columns: 1fr; }
 }
+
+/* Ascend UX Density Sprint — native Journey focus */
+@media (max-width: 1180px) {
+  body.ascend-native .journey-v2-hero h1 {
+    font-size: clamp(2.2rem, 6vw, 3.25rem);
+    line-height: 1.02;
+  }
+
+  body.ascend-native .journey-v2-hero p {
+    font-size: .94rem;
+    line-height: 1.55;
+  }
+}
+
+@media (max-width: 600px) {
+  body.ascend-native .journey-v2-hero h1 {
+    font-size: 2.15rem;
+  }
+
+  body.ascend-native .journey-v2-hero p {
+    font-size: .88rem;
+  }
+}
+
+
+/* =========================================================
+   Ascend UX Density Sprint — Package 08C
+   Native Journey scanability.
+   ========================================================= */
+@media (max-width: 1180px) {
+  body.ascend-native .journey-v2-page { gap: 15px; }
+  body.ascend-native .journey-v2-hero { gap: 18px; padding-top: 2px; }
+  body.ascend-native .journey-v2-summary { min-width: 138px; padding: 11px 13px; }
+  body.ascend-native .basecamp-v2 { gap: 14px; padding: 17px 18px; }
+  body.ascend-native .basecamp-v2-icon { width: 46px; height: 46px; border-radius: 14px; }
+  body.ascend-native .basecamp-v2-copy h2 { font-size: 1.16rem; }
+  body.ascend-native .basecamp-v2-progress { margin-top: 9px; }
+  body.ascend-native .journey-v2-shell,
+  body.ascend-native .journey-v2-extensions { padding: 18px; border-radius: 19px; }
+  body.ascend-native .journey-v2-heading h2 { font-size: 1.3rem; }
+  body.ascend-native .journey-v2-layout { gap: 16px; margin-top: 17px; }
+  body.ascend-native .trail-map { padding-top: 12px; }
+  body.ascend-native .trail-stop-card { min-height: 68px; }
+  body.ascend-native .milestone-detail { padding: 17px; }
+  body.ascend-native .milestone-detail-number { font-size: 2.6rem; }
+  body.ascend-native .milestone-detail h2 { font-size: 1.4rem; }
+}
+@media (max-width: 600px) {
+  body.ascend-native .journey-v2-hero p { display: none; }
+  body.ascend-native .journey-v2-summary { width: auto; min-width: 0; align-self: stretch; }
+  body.ascend-native .basecamp-v2 { padding: 14px; }
+  body.ascend-native .basecamp-v2-icon { display: none; }
+  body.ascend-native .journey-v2-shell,
+  body.ascend-native .journey-v2-extensions { padding: 14px 12px; }
+  body.ascend-native .journey-v2-heading p { font-size: .84rem; line-height: 1.5; }
+  body.ascend-native .journey-v2-legend { gap: 7px 10px; }
+  body.ascend-native .trail-stop-card { min-height: 62px; padding: 9px 10px; }
+  body.ascend-native .trail-stop-icon { width: 32px; height: 32px; }
+}

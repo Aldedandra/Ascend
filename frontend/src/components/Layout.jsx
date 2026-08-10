@@ -1,4 +1,5 @@
 import {
+  ArrowLeft,
   Award,
   BookOpen,
   BookOpenCheck,
@@ -11,10 +12,12 @@ import {
   NotebookPen,
   Presentation,
   Route,
+  Mic2,
   X,
 } from "lucide-react";
+import { Capacitor } from "@capacitor/core";
 import { useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import AscendLogo from "./AscendLogo";
 import WorkspaceSwitcher from "./WorkspaceSwitcher";
 
@@ -34,6 +37,7 @@ const curriculumGroups = [
       { to: "/portfolio", label: "Portfolio", icon: Award },
       { to: "/progress", label: "Progress", icon: Route },
       { to: "/notifications", label: "Notifications", icon: Bell },
+      { to: "/voice-studio", label: "Voice Studio", icon: Mic2 },
     ],
   },
 ];
@@ -57,9 +61,23 @@ const workshopGroups = [
 
 export default function Layout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
   const isWorkshop = location.pathname.startsWith("/workshop");
+  const native = Capacitor.isNativePlatform();
+  const pageAlreadyOwnsBackNavigation =
+    location.pathname.startsWith("/lessons/") ||
+    /^\/workshop\/sessions\/[^/]+$/.test(location.pathname);
+  const showNativeBack = native && location.pathname !== "/" && !pageAlreadyOwnsBackNavigation;
+
+  const goBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+      return;
+    }
+    navigate(isWorkshop ? "/workshop" : "/");
+  };
   const navGroups = isWorkshop ? workshopGroups : curriculumGroups;
 
   const topbar = isWorkshop
@@ -162,6 +180,12 @@ export default function Layout() {
         </header>
 
         <main className="main-content">
+          {showNativeBack ? (
+            <button className="native-page-back" type="button" onClick={goBack}>
+              <ArrowLeft size={17} />
+              <span>Back</span>
+            </button>
+          ) : null}
           <Outlet />
         </main>
       </div>
