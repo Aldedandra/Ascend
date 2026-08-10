@@ -7,6 +7,8 @@ services:
     environment:
      JOURNEY_DB_PATH: /data/journey.db
      CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000,http://100.73.37.48:3001,capacitor://localhost
+     ELEVENLABS_API_KEY: ${ELEVENLABS_API_KEY:-}
+     ELEVENLABS_MODEL_ID: ${ELEVENLABS_MODEL_ID:-eleven_flash_v2_5}
     volumes:
       - journey_data:/data
     ports:

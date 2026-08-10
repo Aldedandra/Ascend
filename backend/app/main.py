@@ -3,12 +3,14 @@ import os
 from datetime import datetime, timezone
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from .content import ACHIEVEMENTS, MODULES
 from .database import get_connection, initialize_database
-from .schemas import JournalCreate, ProgressUpdate, QuizSubmission
+from .schemas import ElevenLabsLessonAudioRequest, ElevenLabsPreviewRequest, JournalCreate, ProgressUpdate, QuizSubmission
+from .elevenlabs_service import cached_lesson_audio, create_preview, list_voices, narrator_catalog, prepare_lesson_audio
 
 app = FastAPI(title="The Journey API", version="1.0.0")
 
@@ -226,3 +228,82 @@ def delete_journal(entry_id: int) -> dict[str, bool]:
         if cursor.rowcount == 0:
             raise HTTPException(status_code=404, detail="Journal entry not found")
     return {"deleted": True}
+
+
+@app.get("/api/audio/elevenlabs/status")
+def elevenlabs_status() -> dict[str, Any]:
+    configured = bool(os.getenv("ELEVENLABS_API_KEY", "").strip())
+    return {
+        "configured": configured,
+        "model_id": os.getenv("ELEVENLABS_MODEL_ID", "eleven_flash_v2_5"),
+    }
+
+
+@app.get("/api/audio/elevenlabs/voices")
+async def elevenlabs_voices() -> dict[str, Any]:
+    voices = await list_voices()
+    return {"voices": voices}
+
+
+@app.post("/api/audio/elevenlabs/preview")
+async def elevenlabs_preview(preview: ElevenLabsPreviewRequest) -> Response:
+    audio, metadata = await create_preview(preview.voice_id, preview.text.strip(), preview.model_id)
+    return Response(content=audio, media_type="audio/mpeg", headers=metadata)
+
+
+
+@app.get("/api/audio/elevenlabs/narrators")
+def elevenlabs_narrators() -> dict[str, Any]:
+    return {"narrators": narrator_catalog(), "default": "bella"}
+
+
+@app.get("/api/audio/elevenlabs/lessons/{lesson_id}/status")
+def elevenlabs_lesson_audio_status(lesson_id: str, narrator_id: str = "bella") -> dict[str, Any]:
+    find_lesson(lesson_id)
+    cached = cached_lesson_audio(lesson_id, narrator_id)
+    return {
+        "lesson_id": lesson_id,
+        "narrator_id": narrator_id,
+        "ready": bool(cached),
+        "metadata": cached[1] if cached else None,
+    }
+
+
+@app.post("/api/audio/elevenlabs/lessons/{lesson_id}/prepare")
+async def elevenlabs_prepare_lesson_audio(
+    lesson_id: str,
+    request: ElevenLabsLessonAudioRequest,
+) -> dict[str, Any]:
+    lesson = find_lesson(lesson_id)
+    script = (lesson.get("audio_script") or "").strip()
+    if not script:
+        raise HTTPException(status_code=400, detail="This lesson does not have an audio script.")
+
+    metadata = await prepare_lesson_audio(
+        lesson_id=lesson_id,
+        narrator_id=request.narrator_id,
+        text=script,
+        title=lesson.get("title", lesson_id),
+    )
+    return {
+        **metadata,
+        "audio_url": f"/api/audio/elevenlabs/lessons/{lesson_id}?narrator_id={request.narrator_id}",
+    }
+
+
+@app.get("/api/audio/elevenlabs/lessons/{lesson_id}")
+def elevenlabs_lesson_audio(lesson_id: str, narrator_id: str = "bella") -> FileResponse:
+    find_lesson(lesson_id)
+    cached = cached_lesson_audio(lesson_id, narrator_id)
+    if not cached:
+        raise HTTPException(
+            status_code=404,
+            detail="Audio has not been generated for this lesson and narrator yet.",
+        )
+    audio_path, metadata = cached
+    return FileResponse(
+        path=audio_path,
+        media_type="audio/mpeg",
+        filename=f"{lesson_id}-{narrator_id}.mp3",
+        headers={"X-Ascend-Narrator": metadata.get("narrator_name", narrator_id)},
+    )
