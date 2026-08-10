@@ -12,7 +12,6 @@ import {
   NotebookPen,
   Presentation,
   Route,
-  Mic2,
   X,
 } from "lucide-react";
 import { Capacitor } from "@capacitor/core";
@@ -37,7 +36,6 @@ const curriculumGroups = [
       { to: "/portfolio", label: "Portfolio", icon: Award },
       { to: "/progress", label: "Progress", icon: Route },
       { to: "/notifications", label: "Notifications", icon: Bell },
-      { to: "/voice-studio", label: "Voice Studio", icon: Mic2 },
     ],
   },
 ];
@@ -77,7 +75,6 @@ export default function Layout() {
     "/portfolio",
     "/progress",
     "/notifications",
-    "/voice-studio",
   ]);
 
   const workshopBackRoutes = new Set([

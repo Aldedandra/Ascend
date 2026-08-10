@@ -10,6 +10,14 @@ const TAB_LABELS = {
   reflection: "Reflection",
 };
 
+const RESUME_ACTIONS = {
+  lesson: "Continue lesson",
+  audio: "Continue listening",
+  lab: "Continue lab",
+  quiz: "Continue quiz",
+  reflection: "Continue reflection",
+};
+
 export default function ContinueLearningCard({ lesson, session }) {
   if (!lesson) return null;
 
@@ -20,6 +28,9 @@ export default function ContinueLearningCard({ lesson, session }) {
     ? describeLastOpened(session.lastOpenedAt)
     : "Your next lesson";
   const resumeLabel = TAB_LABELS[activeTab] || "Lesson";
+  const actionLabel = savedLesson
+    ? RESUME_ACTIONS[activeTab] || "Resume learning"
+    : "Start lesson";
 
   return (
     <article className="continue-climb-card">
@@ -67,7 +78,7 @@ export default function ContinueLearningCard({ lesson, session }) {
           </div>
 
           <Link className="primary-button continue-climb-button" to={`/lessons/${lesson.id}`}>
-            <Play size={17} /> {savedLesson ? "Resume learning" : "Start lesson"}
+            <Play size={17} /> {actionLabel}
           </Link>
         </div>
       </div>

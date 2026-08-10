@@ -1,0 +1,3057 @@
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #e8eefc;
+  background: #071318;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --bg: #071318;
+  --surface: #0b1b22;
+  --surface-2: #102630;
+  --border: rgba(139, 163, 205, 0.16);
+  --text: #f2fbfc;
+  --muted: #91aab0;
+  --accent: #29d3e8;
+  --accent-2: #17b9c8;
+  --danger: #ff6b7a;
+  --shadow: 0 22px 60px rgba(0, 0, 0, 0.28);
+}
+
+* { box-sizing: border-box; }
+
+html { background: var(--bg); }
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 80% -10%, rgba(41, 211, 232, 0.18), transparent 34%),
+    radial-gradient(circle at 20% 110%, rgba(23, 185, 200, 0.09), transparent 30%),
+    var(--bg);
+  color: var(--text);
+}
+
+button, input, textarea { font: inherit; }
+
+button, a { -webkit-tap-highlight-color: transparent; }
+
+a { color: inherit; text-decoration: none; }
+
+h1, h2, h3, p { margin-top: 0; }
+
+h1 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.05;
+  margin-bottom: 0.9rem;
+}
+
+h2 {
+  font-size: 1.18rem;
+  margin-bottom: 0.65rem;
+}
+
+p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+small { color: var(--muted); }
+
+.app-shell { min-height: 100vh; display: flex; }
+
+.sidebar {
+  width: 270px;
+  min-height: 100vh;
+  position: fixed;
+  inset: 0 auto 0 0;
+  padding: 22px 18px;
+  background: rgba(7,18,23, 0.95);
+  border-right: 1px solid var(--border);
+  backdrop-filter: blur(18px);
+  display: flex;
+  flex-direction: column;
+  z-index: 30;
+}
+
+.brand { display: flex; align-items: center; gap: 12px; padding: 4px 6px 22px; }
+.brand strong, .brand span { display: block; }
+.brand span { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+.brand-mark, .stat-icon, .achievement-icon {
+  width: 42px; height: 42px; border-radius: 13px;
+  display: grid; place-items: center;
+  background: linear-gradient(145deg, rgba(41,211,232,.26), rgba(23,185,200,.12));
+  color: #78eef4; border: 1px solid rgba(41,211,232,.22);
+}
+
+.nav-list { display: grid; gap: 8px; }
+.nav-link {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: 12px;
+  color: var(--muted);
+}
+.nav-link:hover, .nav-link.active {
+  background: rgba(41, 211, 232, 0.12);
+  color: var(--text);
+}
+.nav-link.active { border: 1px solid rgba(41, 211, 232, 0.2); }
+
+.mission-card {
+  margin-top: auto;
+  padding: 16px;
+  border-radius: 16px;
+  background: linear-gradient(150deg, rgba(41,211,232,.13), rgba(23,185,200,.07));
+  border: 1px solid var(--border);
+}
+.mission-card span { display: block; color: var(--accent-2); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
+.mission-card strong { line-height: 1.4; }
+.mission-card p { font-size: .82rem; margin: 8px 0 0; }
+
+.main-column { margin-left: 270px; width: calc(100% - 270px); min-height: 100vh; }
+.topbar {
+  min-height: 74px; display: flex; align-items: center; gap: 12px;
+  padding: 0 32px; border-bottom: 1px solid var(--border);
+  background: rgba(7,19,24,.72); backdrop-filter: blur(16px);
+  position: sticky; top: 0; z-index: 20;
+}
+.topbar strong { display: block; font-size: .92rem; }
+.main-content { width: min(1500px, 100%); margin: 0 auto; padding: 34px; }
+.page-stack { display: grid; gap: 24px; }
+.page-header { max-width: 780px; }
+.page-header p { font-size: 1.02rem; }
+
+.eyebrow {
+  display: block; color: var(--accent-2); font-size: .7rem;
+  letter-spacing: .13em; font-weight: 800; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.hero-panel, .lesson-hero {
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background:
+    linear-gradient(120deg, rgba(41,211,232,.14), transparent 44%),
+    linear-gradient(310deg, rgba(23,185,200,.08), transparent 38%),
+    var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.hero-panel {
+  min-height: 340px; padding: clamp(28px, 5vw, 60px);
+  display: flex; align-items: center; justify-content: space-between;
+  overflow: hidden;
+}
+.hero-copy { max-width: 720px; position: relative; z-index: 2; }
+.hero-copy p { font-size: 1.06rem; max-width: 640px; }
+.hero-orbit {
+  width: 280px; aspect-ratio: 1; border-radius: 50%;
+  display: grid; place-items: center; position: relative;
+  color: var(--accent-2); flex: 0 0 auto;
+}
+.orbit-ring { position: absolute; inset: 10%; border: 1px solid rgba(41,211,232,.34); border-radius: 50%; }
+.orbit-one { transform: rotate(26deg) scaleY(.55); }
+.orbit-two { transform: rotate(-26deg) scaleY(.55); border-color: rgba(23,185,200,.25); }
+
+.primary-button, .secondary-button, .complete-button {
+  border: 0; border-radius: 12px; padding: 11px 16px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  cursor: pointer; font-weight: 750;
+}
+
+.primary-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.primary-button { background: linear-gradient(135deg, #29d3e8, #0aa5b7); color: white; box-shadow: 0 12px 28px rgba(41,211,232,.23); }
+.secondary-button { background: rgba(41,211,232,.12); color: var(--text); border: 1px solid rgba(41,211,232,.2); }
+.complete-button { background: rgba(23,185,200,.1); color: #8cf3f0; border: 1px solid rgba(23,185,200,.2); }
+.complete-button.completed { background: rgba(23,185,200,.2); }
+
+.text-button {
+  width: fit-content; border: 0; background: transparent; color: var(--muted);
+  cursor: pointer; padding: 0;
+}
+.icon-button {
+  width: 38px; height: 38px; display: grid; place-items: center;
+  border: 1px solid var(--border); border-radius: 10px;
+  color: var(--text); background: rgba(255,255,255,.03); cursor: pointer;
+}
+.icon-button.danger { color: var(--danger); }
+.menu-button, .sidebar-close { display: none; }
+
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px;
+}
+.stat-card {
+  padding: 20px; border-radius: 17px; background: var(--surface);
+  border: 1px solid var(--border); display: flex; align-items: center; gap: 14px;
+}
+.stat-card span, .stat-card strong, .stat-card small { display: block; }
+.stat-card span { color: var(--muted); font-size: .8rem; }
+.stat-card strong { font-size: 1.4rem; margin: 3px 0; }
+
+.content-grid { display: grid; gap: 20px; }
+.two-column { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.panel {
+  padding: 24px; border-radius: 18px; background: var(--surface);
+  border: 1px solid var(--border); box-shadow: 0 12px 40px rgba(0,0,0,.16);
+}
+.panel-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 18px; }
+.panel-heading h2 { display: flex; align-items: center; gap: 8px; }
+.panel-heading > a { color: #78eef4; font-size: .9rem; }
+
+.progress-track { height: 10px; border-radius: 999px; background: rgba(255,255,255,.06); overflow: hidden; }
+.progress-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+
+.roadmap-list, .quest-list, .lesson-list { display: grid; gap: 12px; margin-top: 20px; }
+.roadmap-row { display: flex; align-items: flex-start; gap: 12px; }
+.roadmap-row strong, .roadmap-row small { display: block; }
+.roadmap-row small { margin-top: 3px; }
+.module-dot { width: 11px; height: 11px; border-radius: 50%; margin-top: 6px; background: #334155; }
+.module-dot.active { background: var(--accent-2); box-shadow: 0 0 16px rgba(23,185,200,.5); }
+.quest-list div { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 11px; background: rgba(255,255,255,.025); color: var(--muted); }
+
+.module-list { display: grid; gap: 18px; }
+.module-card {
+  display: grid; grid-template-columns: 92px 1fr; gap: 20px;
+  padding: 24px; border-radius: 20px; background: var(--surface);
+  border: 1px solid var(--border);
+}
+.module-card.locked { opacity: .58; }
+.module-number { font-size: 2.2rem; font-weight: 900; color: rgba(127,176,255,.62); }
+.module-card-title { display: flex; justify-content: space-between; gap: 20px; }
+.module-card-title h2 { font-size: 1.28rem; }
+.lesson-row {
+  display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 12px;
+  padding: 13px; border-radius: 13px; background: rgba(255,255,255,.025);
+  border: 1px solid transparent;
+}
+.lesson-row:hover { border-color: rgba(41,211,232,.22); }
+.lesson-row strong, .lesson-row small { display: block; }
+.lesson-row small { margin-top: 3px; }
+.lesson-check {
+  width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center;
+  background: rgba(41,211,232,.1); color: #78eef4; font-size: .74rem; font-weight: 800;
+}
+.lesson-check.done { background: rgba(23,185,200,.14); color: var(--accent-2); }
+
+.lesson-hero {
+  padding: 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px;
+}
+.lesson-meta { display: flex; gap: 9px; flex-wrap: wrap; }
+.lesson-meta span, .status-pill {
+  padding: 6px 10px; border-radius: 999px; background: rgba(41,211,232,.09);
+  color: #a8f4f7; font-size: .78rem; border: 1px solid rgba(41,211,232,.16);
+}
+
+.tab-row {
+  display: flex; gap: 8px; flex-wrap: wrap; padding: 6px;
+  border-radius: 14px; background: var(--surface); border: 1px solid var(--border);
+}
+.tab-row button {
+  border: 0; background: transparent; color: var(--muted);
+  padding: 10px 15px; border-radius: 10px; cursor: pointer;
+}
+.tab-row button.active { background: rgba(41,211,232,.14); color: var(--text); }
+
+.lesson-content { display: grid; gap: 10px; }
+.lesson-content article { padding-bottom: 15px; border-bottom: 1px solid var(--border); }
+.lesson-content article:last-child { border-bottom: 0; padding-bottom: 0; }
+.audio-note { padding: 12px 14px; border-left: 3px solid var(--accent-2); background: rgba(23,185,200,.06); }
+.audio-script, .prompt-box {
+  white-space: pre-wrap; line-height: 1.85; color: #cbd7ea;
+  background: #080d19; border: 1px solid var(--border); border-radius: 14px; padding: 20px;
+}
+.lab-steps { display: grid; gap: 14px; color: var(--muted); line-height: 1.65; }
+.lab-steps li::marker { color: var(--accent-2); font-weight: 800; }
+
+.quiz-list { display: grid; gap: 22px; margin-bottom: 20px; }
+.quiz-list fieldset { border: 0; padding: 0; margin: 0; }
+.quiz-list legend { font-weight: 750; margin-bottom: 11px; }
+.choice-row {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  margin: 8px 0;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.choice-row input {
+  width: 16px;
+  height: 16px;
+  margin: 3px 0 0;
+  accent-color: var(--accent);
+}
+
+.choice-row span {
+  min-width: 0;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.choice-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.choice-row:has(input:checked) {
+  border-color: rgba(41, 211, 232, 0.35);
+  background: rgba(41, 211, 232, 0.1);
+  color: var(--text);
+}
+.result-banner { margin-top: 14px; padding: 12px 14px; border-radius: 11px; background: rgba(23,185,200,.11); color: #95eee3; }
+.reflection-question { font-size: 1.15rem; color: var(--text); }
+
+.achievement-grid, .portfolio-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px;
+}
+.achievement-card {
+  padding: 18px; border-radius: 15px; background: rgba(255,255,255,.025);
+  border: 1px solid var(--border);
+}
+.achievement-card strong { display: block; margin: 10px 0 6px; }
+.achievement-card p { font-size: .88rem; }
+.achievement-card small { color: var(--accent-2); }
+
+.journal-layout { align-items: start; }
+.journal-form { position: sticky; top: 98px; }
+.journal-form label { display: grid; gap: 7px; margin-bottom: 16px; color: var(--muted); font-size: .85rem; }
+input, textarea {
+  width: 100%; background: #080d19; color: var(--text);
+  border: 1px solid var(--border); border-radius: 11px; padding: 12px;
+  outline: none;
+}
+input:focus, textarea:focus { border-color: rgba(41,211,232,.45); box-shadow: 0 0 0 3px rgba(41,211,232,.08); }
+textarea { resize: vertical; }
+.journal-entries { display: grid; gap: 16px; }
+.journal-entry p { white-space: pre-wrap; }
+.portfolio-card h2 { margin-top: 15px; }
+
+.error-card, .loading-card {
+  padding: 18px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface);
+}
+.error-card { color: #ffadb6; border-color: rgba(255,107,122,.22); }
+
+.sidebar-overlay { display: none; }
+
+@media (max-width: 1050px) {
+  .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .achievement-grid, .portfolio-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .hero-orbit { width: 210px; }
+}
+
+@media (max-width: 820px) {
+  .sidebar {
+    transform: translateX(-105%);
+    transition: transform .22s ease;
+    box-shadow: 26px 0 80px rgba(0,0,0,.45);
+  }
+  .sidebar-open { transform: translateX(0); }
+  .sidebar-close, .menu-button { display: grid; }
+  .sidebar-close { margin-left: auto; }
+  .sidebar-overlay {
+    display: block; position: fixed; inset: 0; z-index: 25;
+    border: 0; background: rgba(0,0,0,.5);
+  }
+  .main-column { margin-left: 0; width: 100%; }
+  .main-content { padding: 22px; }
+  .topbar { padding: 0 20px; }
+  .two-column { grid-template-columns: 1fr; }
+  .journal-form { position: static; }
+  .hero-panel { min-height: unset; }
+  .hero-orbit { display: none; }
+}
+
+@media (max-width: 560px) {
+  .main-content { padding: 16px; }
+  .topbar strong { font-size: .78rem; }
+  .stats-grid, .achievement-grid, .portfolio-grid { grid-template-columns: 1fr; }
+  .hero-panel, .lesson-hero { padding: 22px; border-radius: 18px; }
+  .lesson-hero { align-items: flex-start; flex-direction: column; }
+  .module-card { grid-template-columns: 1fr; padding: 18px; }
+  .module-number { font-size: 1.3rem; }
+  .lesson-row { grid-template-columns: 38px 1fr auto; }
+  .panel { padding: 18px; }
+  .tab-row { overflow-x: auto; flex-wrap: nowrap; }
+  .tab-row button { white-space: nowrap; }
+}
+
+/* =========================================================
+   Ascend v1.0 brand system
+   ========================================================= */
+
+body {
+  background:
+    radial-gradient(circle at 76% -8%, rgba(41, 211, 232, 0.14), transparent 34%),
+    radial-gradient(circle at 14% 105%, rgba(23, 185, 200, 0.08), transparent 32%),
+    linear-gradient(180deg, #071318 0%, #08171d 46%, #061116 100%);
+}
+
+.sidebar {
+  background:
+    linear-gradient(180deg, rgba(8, 24, 30, 0.98), rgba(5, 15, 20, 0.98));
+}
+
+.brand { padding-bottom: 26px; }
+.brand-mark {
+  width: 48px;
+  height: 48px;
+  padding: 5px;
+  overflow: hidden;
+  background: linear-gradient(145deg, rgba(41, 211, 232, .18), rgba(8, 26, 33, .88));
+  border: 1px solid rgba(41, 211, 232, .25);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 12px 30px rgba(0,0,0,.25);
+}
+.brand-mark svg { width: 100%; height: 100%; }
+.brand-copy strong { letter-spacing: .22em; font-size: .94rem; }
+.brand-copy span { color: #48dbe6; letter-spacing: .04em; }
+
+.nav-group { display: grid; gap: 6px; margin-bottom: 18px; }
+.nav-group-label {
+  padding: 0 14px 5px;
+  color: #567078;
+  font-size: .64rem;
+  font-weight: 800;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.nav-link { position: relative; overflow: hidden; }
+.nav-link::before {
+  content: "";
+  position: absolute;
+  inset: 9px auto 9px 0;
+  width: 2px;
+  border-radius: 999px;
+  background: transparent;
+}
+.nav-link.active::before { background: #29d3e8; box-shadow: 0 0 12px rgba(41,211,232,.7); }
+.nav-link:hover, .nav-link.active { background: linear-gradient(90deg, rgba(41,211,232,.12), rgba(41,211,232,.035)); }
+
+.mission-card {
+  background:
+    linear-gradient(150deg, rgba(41,211,232,.11), rgba(7,19,24,.38)),
+    #0a1d24;
+}
+
+.topbar { justify-content: space-between; }
+.topbar-copy { min-width: 0; }
+.topbar-badge {
+  border: 1px solid rgba(41,211,232,.2);
+  border-radius: 999px;
+  padding: 7px 11px;
+  color: #57dfe8;
+  background: rgba(41,211,232,.06);
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .17em;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, #28d4e5, #0a99ad);
+  color: #031116;
+  box-shadow: 0 12px 28px rgba(10,165,183,.22);
+}
+.primary-button:hover { filter: brightness(1.06); transform: translateY(-1px); }
+.secondary-button { background: rgba(41,211,232,.08); border-color: rgba(41,211,232,.18); }
+
+.ascend-hero {
+  min-height: 380px;
+  background:
+    linear-gradient(115deg, rgba(41,211,232,.12), transparent 46%),
+    linear-gradient(315deg, rgba(23,185,200,.09), transparent 42%),
+    linear-gradient(145deg, #0d252e, #08171d 72%);
+  position: relative;
+}
+.ascend-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to left, black, transparent 70%);
+}
+.ascend-hero h1 { font-size: clamp(2.8rem, 7vw, 5.4rem); letter-spacing: -.055em; }
+.ascend-hero .hero-copy p { max-width: 660px; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+
+.mountain-visual {
+  width: min(330px, 34vw);
+  min-width: 230px;
+  aspect-ratio: 1;
+  position: relative;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+.mountain-visual svg { width: 76%; filter: drop-shadow(0 18px 38px rgba(2,10,14,.45)); }
+.mountain-visual > span {
+  position: absolute;
+  bottom: 3%;
+  font-size: .66rem;
+  font-weight: 900;
+  letter-spacing: .18em;
+  color: #83eef3;
+}
+.altitude-line {
+  position: absolute;
+  inset: 7%;
+  border: 1px solid rgba(41,211,232,.11);
+  border-radius: 48% 52% 44% 56%;
+}
+.altitude-two { inset: 16%; transform: rotate(18deg); }
+.altitude-three { inset: 25%; transform: rotate(-16deg); }
+
+.stat-card {
+  background: linear-gradient(145deg, rgba(16,38,48,.95), rgba(8,24,30,.95));
+  transition: transform .18s ease, border-color .18s ease;
+}
+.stat-card:hover { transform: translateY(-2px); border-color: rgba(41,211,232,.26); }
+.stat-icon, .achievement-icon {
+  background: linear-gradient(145deg, rgba(41,211,232,.17), rgba(23,185,200,.07));
+  color: #61e3eb;
+}
+
+.dashboard-grid { grid-template-columns: 1.15fr .85fr; }
+.continue-panel { background: linear-gradient(145deg, rgba(15,41,50,.98), rgba(9,25,31,.98)); }
+.lesson-context { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0 22px; }
+.lesson-context span {
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: rgba(41,211,232,.065);
+  border: 1px solid rgba(41,211,232,.13);
+  color: #a8c5ca;
+  font-size: .76rem;
+}
+.progress-number { font-size: 1.7rem; color: #6fe8ee; }
+
+.platform-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 16px; }
+.platform-card {
+  padding: 22px;
+  border-radius: 18px;
+  background: linear-gradient(150deg, rgba(14,36,44,.92), rgba(8,22,28,.92));
+  border: 1px solid var(--border);
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+.platform-card:hover { transform: translateY(-3px); border-color: rgba(41,211,232,.28); }
+.platform-card > svg { color: #4edbe5; margin-bottom: 22px; }
+.platform-card strong { display: block; margin-bottom: 5px; }
+.platform-card p { font-size: .85rem; margin: 0; line-height: 1.55; }
+.active-platform { background: linear-gradient(145deg, rgba(41,211,232,.12), rgba(8,24,30,.96)); }
+
+.climb-principle { display: flex; align-items: center; gap: 15px; }
+.climb-principle > svg { color: #42d7e2; flex: 0 0 auto; }
+.climb-principle strong { line-height: 1.5; }
+
+.coming-soon-panel { display: flex; gap: 20px; align-items: flex-start; max-width: 900px; }
+.coming-soon-icon {
+  width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center;
+  color: #67e7ee; background: rgba(41,211,232,.09); border: 1px solid rgba(41,211,232,.16); flex: 0 0 auto;
+}
+.feature-preview-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 14px; }
+.feature-preview-card { display: flex; align-items: center; gap: 10px; min-height: 86px; }
+.feature-preview-card svg { color: #52dce5; }
+
+.module-number { color: rgba(83,224,233,.65); }
+.lesson-row:hover { border-color: rgba(41,211,232,.22); }
+.lesson-check { color: #6fe8ee; }
+.panel-heading > a { color: #64e3eb; }
+
+@media (max-width: 1100px) {
+  .platform-grid, .feature-preview-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .dashboard-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 760px) {
+  .topbar-badge { display: none; }
+  .topbar { padding-inline: 18px; }
+  .main-content { padding: 20px 16px 34px; }
+  .ascend-hero { min-height: auto; padding: 30px 22px; }
+  .mountain-visual { width: 210px; min-width: 0; margin: 4px auto 0; }
+  .platform-grid, .feature-preview-grid { grid-template-columns: 1fr; }
+  .coming-soon-panel { flex-direction: column; }
+}
+
+@media (max-width: 560px) {
+  .ascend-hero h1 { font-size: 3rem; }
+  .hero-actions > * { width: 100%; }
+  .topbar-copy strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 74vw; }
+}
+
+/* iPhone Home Screen safe-area support */
+@supports (padding: env(safe-area-inset-top)) {
+  .topbar {
+    min-height: calc(74px + env(safe-area-inset-top));
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .sidebar {
+    padding-top: calc(22px + env(safe-area-inset-top));
+    padding-bottom: calc(22px + env(safe-area-inset-bottom));
+  }
+}
+
+body,
+.app-shell,
+.main-column {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* =========================================================
+   Ascend Mobile UI v1.1
+   Native iPhone and iPad dashboard refinement
+   ========================================================= */
+
+.ascend-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(230px, 330px);
+  grid-template-areas:
+    "copy visual"
+    "actions visual";
+  column-gap: clamp(24px, 4vw, 54px);
+  row-gap: 24px;
+}
+
+.ascend-hero .hero-copy {
+  grid-area: copy;
+  align-self: end;
+}
+
+.ascend-hero .mountain-visual {
+  grid-area: visual;
+  align-self: center;
+  justify-self: end;
+}
+
+.ascend-hero .hero-actions {
+  grid-area: actions;
+  align-self: start;
+  margin-top: 0;
+}
+
+@supports (padding-top: env(safe-area-inset-top)) {
+  .topbar {
+    padding-top: env(safe-area-inset-top);
+    min-height: calc(74px + env(safe-area-inset-top));
+  }
+
+  .main-content {
+    padding-bottom: calc(34px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 820px) {
+  .topbar {
+    min-height: 66px;
+    gap: 14px;
+    padding-inline: 16px;
+  }
+
+  .menu-button {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 auto;
+    border-radius: 13px;
+  }
+
+  .topbar-copy {
+    flex: 1;
+  }
+
+  .topbar-copy .eyebrow {
+    margin-bottom: 4px;
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+  }
+
+  .topbar-copy strong {
+    font-size: 0.84rem;
+    line-height: 1.35;
+  }
+
+  .main-content {
+    padding: 20px 16px 36px;
+  }
+
+  .page-stack {
+    gap: 18px;
+  }
+
+  .ascend-hero {
+    min-height: 0;
+    padding: 28px 22px 24px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "copy"
+      "visual"
+      "actions";
+    row-gap: 20px;
+  }
+
+  .ascend-hero .hero-copy {
+    align-self: auto;
+  }
+
+  .ascend-hero h1 {
+    font-size: clamp(2.65rem, 12vw, 4rem);
+    line-height: 0.98;
+    margin-bottom: 16px;
+    letter-spacing: -0.055em;
+  }
+
+  .ascend-hero .hero-copy p {
+    max-width: none;
+    margin-bottom: 0;
+    font-size: 0.98rem;
+    line-height: 1.6;
+  }
+
+  .ascend-hero .mountain-visual {
+    width: 156px;
+    min-width: 0;
+    margin: 0 auto;
+    justify-self: center;
+  }
+
+  .mountain-visual svg {
+    width: 78%;
+  }
+
+  .mountain-visual > span {
+    bottom: 0;
+    font-size: 0.62rem;
+  }
+
+  .ascend-hero .hero-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    gap: 10px;
+  }
+
+  .ascend-hero .hero-actions > * {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .stat-card {
+    min-height: 112px;
+    padding: 16px;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    flex: 0 0 auto;
+  }
+
+  .stat-card span {
+    font-size: 0.76rem;
+  }
+
+  .stat-card strong {
+    font-size: 1.32rem;
+    margin: 2px 0;
+  }
+
+  .stat-card small {
+    line-height: 1.35;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .platform-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .platform-card {
+    min-height: 168px;
+  }
+}
+
+@media (max-width: 560px) {
+  .topbar {
+    padding-inline: 14px;
+  }
+
+  .topbar-copy strong {
+    max-width: none;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    font-size: 0.78rem;
+  }
+
+  .main-content {
+    padding: 14px 14px 30px;
+  }
+
+  .ascend-hero {
+    padding: 24px 20px 22px;
+    border-radius: 20px;
+    row-gap: 18px;
+  }
+
+  .ascend-hero h1 {
+    font-size: clamp(2.55rem, 13vw, 3.35rem);
+  }
+
+  .ascend-hero .hero-copy p {
+    font-size: 0.96rem;
+  }
+
+  .ascend-hero .mountain-visual {
+    width: 142px;
+  }
+
+  .ascend-hero .hero-actions {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+
+  .primary-button,
+  .secondary-button {
+    padding-inline: 13px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stat-card {
+    min-height: 104px;
+    padding: 14px;
+  }
+
+  .stat-card strong {
+    font-size: 1.24rem;
+  }
+
+  .panel {
+    padding: 18px;
+  }
+
+  .platform-grid,
+  .feature-preview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .platform-card {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 390px) {
+  .topbar-copy strong {
+    font-size: 0.72rem;
+  }
+
+  .ascend-hero .hero-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    min-height: 92px;
+  }
+}
+
+@media (min-width: 821px) and (max-width: 1180px) {
+  .ascend-hero {
+    grid-template-columns: minmax(0, 1fr) 250px;
+  }
+
+  .ascend-hero h1 {
+    font-size: clamp(3.2rem, 6vw, 4.5rem);
+  }
+
+  .mountain-visual {
+    width: 250px;
+    min-width: 0;
+  }
+}
+
+/* Ascend Phase 3 — reusable lesson reading and mobile polish */
+.lesson-content-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 20px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+.lesson-content-toolbar p { margin: 5px 0 0; }
+.lesson-content article h2 { margin-bottom: 8px; }
+.lesson-content article p { margin: 0; line-height: 1.78; }
+.tab-row { scrollbar-width: thin; scrollbar-color: rgba(41,211,232,.28) transparent; }
+.tab-row::-webkit-scrollbar { height: 4px; }
+.tab-row::-webkit-scrollbar-thumb { background: rgba(41,211,232,.28); border-radius: 999px; }
+
+@media (max-width: 560px) {
+  .lesson-hero { gap: 18px; padding: 20px; }
+  .lesson-hero h1 { font-size: clamp(2rem, 10vw, 2.65rem); line-height: 1.04; margin: 10px 0 14px; }
+  .lesson-hero p { font-size: 1rem; line-height: 1.58; }
+  .lesson-hero .complete-button { width: 100%; justify-content: center; }
+  .tab-row { margin-inline: -2px; padding: 5px; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
+  .tab-row button { flex: 0 0 auto; min-width: 92px; padding: 11px 14px; scroll-snap-align: start; }
+  .lesson-content-toolbar { align-items: stretch; flex-direction: column; gap: 12px; }
+  .lesson-content-toolbar .secondary-button { width: 100%; justify-content: center; }
+  .lesson-content { gap: 18px; }
+  .lesson-content article { padding-bottom: 20px; }
+  .audio-script, .prompt-box { padding: 16px; line-height: 1.72; }
+}
+
+/* =========================================================
+   Ascend Phase 3 — lesson learning blocks
+   Reusable diagrams, engineering callouts, and mini exercises
+   ========================================================= */
+
+.lesson-learning-extras {
+  display: grid;
+  gap: 18px;
+  margin-top: 12px;
+}
+
+.lesson-learning-block {
+  padding: 22px;
+  border: 1px solid rgba(41, 211, 232, 0.16);
+  border-radius: 16px;
+  background:
+    linear-gradient(145deg, rgba(41, 211, 232, 0.055), transparent 52%),
+    rgba(5, 17, 22, 0.7);
+}
+
+.lesson-learning-block-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.lesson-learning-block-heading h2 {
+  margin-bottom: 0;
+}
+
+.lesson-learning-block-icon {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(41, 211, 232, 0.18);
+  border-radius: 12px;
+  color: #78eef4;
+  background: rgba(41, 211, 232, 0.09);
+}
+
+.lesson-flow-diagram {
+  display: grid;
+  justify-items: stretch;
+  gap: 0;
+  width: min(720px, 100%);
+  margin: 22px auto;
+}
+
+.lesson-flow-step {
+  display: grid;
+  justify-items: center;
+  width: 100%;
+}
+
+.lesson-flow-node {
+  width: 100%;
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid rgba(41, 211, 232, 0.2);
+  border-radius: 13px;
+  text-align: center;
+  background: rgba(8, 29, 36, 0.94);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.lesson-flow-node strong {
+  color: var(--text);
+}
+
+.lesson-flow-node span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.lesson-flow-arrow {
+  margin: 5px 0;
+  color: var(--accent-2);
+}
+
+.engineer-perspective {
+  border-left: 4px solid var(--accent-2);
+  background:
+    linear-gradient(110deg, rgba(41, 211, 232, 0.1), transparent 62%),
+    rgba(7, 24, 30, 0.92);
+}
+
+.engineer-perspective > p,
+.try-it-yourself > p,
+.lesson-diagram-block > p {
+  margin-bottom: 0;
+}
+
+.try-it-yourself {
+  border-color: rgba(120, 238, 244, 0.22);
+}
+
+.lesson-mini-exercise {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 0;
+  padding-left: 24px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.lesson-mini-exercise li {
+  padding-left: 4px;
+}
+
+.lesson-mini-exercise li::marker {
+  color: var(--accent-2);
+  font-weight: 850;
+}
+
+.lesson-learning-caption {
+  margin: 18px 0 0 !important;
+  padding: 12px 14px;
+  border-radius: 11px;
+  color: #a9c8cd;
+  background: rgba(41, 211, 232, 0.055);
+}
+
+.lesson-learning-caption strong {
+  color: #dffbfc;
+}
+
+@media (max-width: 560px) {
+  .lesson-learning-block {
+    padding: 17px;
+  }
+
+  .lesson-learning-block-heading {
+    gap: 10px;
+  }
+
+  .lesson-learning-block-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .lesson-flow-node {
+    padding: 12px 13px;
+  }
+}
+
+/* =========================================================
+   Ascend Phase 3 — native audio player
+   ========================================================= */
+.ascend-audio-player {
+  display: grid;
+  gap: 22px;
+}
+
+.ascend-audio-heading {
+  margin-bottom: 0;
+}
+
+.audio-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(255,255,255,.03);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.audio-status-speaking {
+  color: #b8fbfd;
+  border-color: rgba(41,211,232,.3);
+  background: rgba(41,211,232,.1);
+}
+
+.audio-status-paused {
+  color: #f3d7a0;
+  border-color: rgba(231,185,104,.25);
+  background: rgba(231,185,104,.08);
+}
+
+.audio-now-reading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 17px;
+  border: 1px solid rgba(41,211,232,.16);
+  border-radius: 15px;
+  background: linear-gradient(135deg, rgba(41,211,232,.08), transparent 58%);
+}
+
+.audio-now-reading > svg {
+  color: #78eef4;
+  flex: 0 0 auto;
+}
+
+.audio-now-reading span,
+.audio-now-reading strong {
+  display: block;
+}
+
+.audio-now-reading span {
+  color: var(--muted);
+  font-size: .75rem;
+}
+
+.audio-now-reading strong {
+  margin-top: 3px;
+}
+
+.audio-progress-wrap {
+  display: grid;
+  gap: 9px;
+}
+
+.audio-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: .76rem;
+}
+
+.audio-progress-track {
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255,255,255,.065);
+}
+
+.audio-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transition: width .2s ease;
+}
+
+.audio-primary-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.audio-play-button,
+.audio-control-button {
+  border: 0;
+  cursor: pointer;
+}
+
+.audio-play-button {
+  min-width: 150px;
+  min-height: 58px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 24px;
+  border-radius: 999px;
+  color: #031116;
+  background: linear-gradient(135deg, #54e5ee, #12adbd);
+  box-shadow: 0 15px 34px rgba(10,165,183,.24);
+  font-weight: 850;
+}
+
+.audio-control-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(41,211,232,.18);
+  border-radius: 50%;
+  color: var(--text);
+  background: rgba(41,211,232,.07);
+}
+
+.audio-speed-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.audio-speed-row > span {
+  color: var(--muted);
+  font-size: .82rem;
+  font-weight: 750;
+}
+
+.audio-speed-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.audio-speed-options button {
+  min-width: 48px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--muted);
+  background: rgba(255,255,255,.025);
+  cursor: pointer;
+}
+
+.audio-speed-options button.active {
+  color: var(--text);
+  border-color: rgba(41,211,232,.32);
+  background: rgba(41,211,232,.12);
+}
+
+.audio-player-message {
+  padding: 11px 13px;
+  border-radius: 10px;
+  color: #c7e9ec;
+  background: rgba(41,211,232,.06);
+  font-size: .8rem;
+}
+
+.audio-script-details {
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+
+.audio-script-details summary {
+  color: #78eef4;
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.audio-script-details .audio-script {
+  margin-top: 15px;
+}
+
+@media (max-width: 560px) {
+  .audio-primary-controls { gap: 12px; }
+  .audio-play-button { min-width: 132px; padding-inline: 18px; }
+  .audio-speed-row { align-items: flex-start; flex-direction: column; }
+  .audio-speed-options { width: 100%; }
+  .audio-speed-options button { flex: 1; }
+  .audio-progress-labels { font-size: .68rem; }
+}
+
+/* Phase 1: persistent learning session + Continue Your Climb */
+.continue-learning-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.continue-learning-card::after {
+  content: "";
+  position: absolute;
+  width: 190px;
+  height: 190px;
+  right: -85px;
+  bottom: -105px;
+  border-radius: 50%;
+  border: 1px solid rgba(41, 211, 232, 0.09);
+  pointer-events: none;
+}
+
+.continue-resume-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 13px 14px;
+  border: 1px solid rgba(41, 211, 232, 0.14);
+  border-radius: 14px;
+  background: rgba(41, 211, 232, 0.055);
+}
+
+.continue-resume-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  color: #68e7ee;
+  background: rgba(41, 211, 232, 0.1);
+  flex: 0 0 auto;
+}
+
+.continue-resume-strip small,
+.continue-resume-strip strong {
+  display: block;
+}
+
+.continue-resume-strip small {
+  color: #7f9da4;
+  margin-bottom: 2px;
+}
+
+.continue-last-opened {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #8aa7ad;
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+
+.continue-audio-progress {
+  height: 5px;
+  margin: 10px 3px 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(112, 142, 148, 0.17);
+}
+
+.continue-audio-progress > div {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #29d3e8, #5ce8ef);
+}
+
+@media (max-width: 560px) {
+  .continue-resume-strip {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .continue-last-opened {
+    width: 100%;
+    margin-left: 50px;
+  }
+}
+
+/* =========================================================
+   Ascend Phase 1 — Package 2
+   Continue Your Climb dashboard
+   ========================================================= */
+.dashboard-v2 {
+  gap: 20px;
+}
+
+.dashboard-welcome {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 8px 2px 2px;
+}
+
+.dashboard-welcome h1 {
+  margin: 0 0 10px;
+  font-size: clamp(2.2rem, 5vw, 4.1rem);
+  line-height: .98;
+  letter-spacing: -.05em;
+}
+
+.dashboard-welcome p {
+  max-width: 690px;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.dashboard-altitude {
+  min-width: 132px;
+  padding: 15px 17px;
+  border: 1px solid rgba(41,211,232,.16);
+  border-radius: 16px;
+  background: rgba(41,211,232,.05);
+  text-align: right;
+}
+
+.dashboard-altitude span,
+.dashboard-altitude small {
+  display: block;
+}
+
+.dashboard-altitude span {
+  color: #69e8ef;
+  font-size: 1.7rem;
+  font-weight: 900;
+  letter-spacing: -.04em;
+}
+
+.dashboard-altitude small {
+  margin-top: 2px;
+  color: #829fa6;
+  font-size: .72rem;
+}
+
+.dashboard-primary-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, .55fr);
+  gap: 18px;
+}
+
+.continue-climb-card,
+.today-climb-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: 0 16px 50px rgba(0,0,0,.2);
+}
+
+.continue-climb-card {
+  padding: clamp(22px, 3vw, 32px);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(41,211,232,.17), transparent 34%),
+    linear-gradient(145deg, rgba(15,43,52,.98), rgba(7,24,30,.99));
+}
+
+.continue-climb-card::after {
+  content: "";
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  right: -125px;
+  bottom: -150px;
+  border: 1px solid rgba(41,211,232,.09);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.continue-climb-topline,
+.continue-climb-footer,
+.continue-audio-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.continue-module-pill {
+  padding: 6px 9px;
+  border: 1px solid rgba(41,211,232,.14);
+  border-radius: 999px;
+  color: #8fc1c7;
+  background: rgba(41,211,232,.05);
+  font-size: .72rem;
+  white-space: nowrap;
+}
+
+.continue-climb-main {
+  position: relative;
+  z-index: 1;
+}
+
+.continue-climb-copy {
+  max-width: 760px;
+  margin-top: 17px;
+}
+
+.continue-climb-module {
+  color: #88a7ae;
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+.continue-climb-copy h2 {
+  margin: 5px 0 10px;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  letter-spacing: -.035em;
+}
+
+.continue-climb-copy p {
+  max-width: 720px;
+  margin: 0;
+}
+
+.continue-climb-resume {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 660px;
+  margin-top: 24px;
+  padding: 13px 14px;
+  border: 1px solid rgba(41,211,232,.14);
+  border-radius: 15px;
+  background: rgba(41,211,232,.055);
+}
+
+.continue-climb-resume small,
+.continue-climb-resume strong {
+  display: block;
+}
+
+.continue-climb-resume small {
+  margin-bottom: 2px;
+  color: #7f9da4;
+}
+
+.continue-audio-block {
+  max-width: 660px;
+  margin-top: 12px;
+}
+
+.continue-audio-meta {
+  margin-bottom: 6px;
+  color: #8aa7ad;
+  font-size: .72rem;
+}
+
+.continue-audio-meta strong {
+  color: #68e7ee;
+}
+
+.continue-climb-footer {
+  align-items: flex-end;
+  margin-top: 22px;
+}
+
+.continue-context {
+  margin: 0;
+}
+
+.continue-climb-button {
+  min-width: 168px;
+}
+
+.today-climb-card {
+  padding: 24px;
+  background: linear-gradient(155deg, rgba(13,34,42,.98), rgba(7,21,27,.99));
+}
+
+.today-climb-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.today-climb-heading .eyebrow {
+  margin-bottom: 3px;
+}
+
+.today-climb-heading h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.today-climb-icon,
+.workshop-preview-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 1px solid rgba(41,211,232,.14);
+  border-radius: 13px;
+  color: #66e7ee;
+  background: rgba(41,211,232,.08);
+}
+
+.today-climb-list {
+  display: grid;
+  gap: 10px;
+}
+
+.today-climb-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 11px 12px;
+  border: 1px solid rgba(255,255,255,.045);
+  border-radius: 13px;
+  background: rgba(255,255,255,.018);
+}
+
+.today-climb-step > span {
+  width: 25px;
+  height: 25px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  color: #78969d;
+  background: rgba(255,255,255,.045);
+  font-size: .7rem;
+  font-weight: 900;
+}
+
+.today-climb-step strong,
+.today-climb-step small {
+  display: block;
+}
+
+.today-climb-step strong {
+  font-size: .83rem;
+}
+
+.today-climb-step small {
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+.today-climb-step.active {
+  border-color: rgba(41,211,232,.13);
+  background: rgba(41,211,232,.045);
+}
+
+.today-climb-step.active > span {
+  color: #052027;
+  background: #48dbe6;
+}
+
+.text-link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 18px;
+  color: #6fe8ee;
+  font-size: .82rem;
+  font-weight: 800;
+}
+
+.dashboard-overview-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+  gap: 18px;
+}
+
+.compact-heading {
+  margin-bottom: 15px;
+}
+
+.ascent-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.ascent-metrics > div {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,.045);
+  border-radius: 13px;
+  background: rgba(255,255,255,.018);
+}
+
+.ascent-metrics svg {
+  margin-bottom: 9px;
+  color: #55dfe8;
+}
+
+.ascent-metrics span,
+.ascent-metrics strong {
+  display: block;
+}
+
+.ascent-metrics span {
+  color: #819fa6;
+  font-size: .7rem;
+}
+
+.ascent-metrics strong {
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1rem;
+}
+
+.current-module-row {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) auto;
+  align-items: center;
+  gap: 11px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.current-module-row small,
+.current-module-row strong {
+  display: block;
+}
+
+.current-module-row small {
+  margin-bottom: 2px;
+}
+
+.current-module-row > a {
+  color: #67e6ed;
+}
+
+.workshop-preview-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.workshop-preview-icon {
+  margin-bottom: 18px;
+}
+
+.workshop-preview-card h2 {
+  margin-bottom: 8px;
+  font-size: 1.25rem;
+}
+
+.workshop-preview-card p {
+  margin-bottom: 15px;
+  font-size: .9rem;
+}
+
+.workshop-preview-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 18px;
+}
+
+.workshop-preview-meta span {
+  padding: 5px 8px;
+  border: 1px solid rgba(41,211,232,.11);
+  border-radius: 999px;
+  color: #8daab0;
+  background: rgba(41,211,232,.04);
+  font-size: .69rem;
+}
+
+.workshop-preview-card .secondary-button {
+  margin-top: auto;
+}
+
+.learning-spaces-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 18px;
+}
+
+.learning-space-card {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  background: linear-gradient(145deg, rgba(13,34,42,.95), rgba(7,22,28,.96));
+  transition: transform .18s ease, border-color .18s ease;
+}
+
+.learning-space-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(41,211,232,.24);
+}
+
+.learning-space-card > svg:first-child,
+.learning-space-card > svg:last-child {
+  color: #61e3eb;
+}
+
+.learning-space-card .eyebrow {
+  margin-bottom: 4px;
+}
+
+.learning-space-card strong {
+  display: block;
+}
+
+.learning-space-card p {
+  margin: 4px 0 0;
+  font-size: .8rem;
+}
+
+.dashboard-principle {
+  padding-block: 18px;
+}
+
+@media (max-width: 1000px) {
+  .dashboard-primary-grid,
+  .dashboard-overview-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .dashboard-welcome {
+    align-items: flex-start;
+  }
+
+  .dashboard-altitude {
+    min-width: 102px;
+  }
+
+  .learning-spaces-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .dashboard-v2 {
+    gap: 14px;
+  }
+
+  .dashboard-welcome {
+    display: block;
+    padding: 5px 3px 2px;
+  }
+
+  .dashboard-welcome h1 {
+    font-size: 2.45rem;
+  }
+
+  .dashboard-welcome p {
+    font-size: .91rem;
+    line-height: 1.55;
+  }
+
+  .dashboard-altitude {
+    display: none;
+  }
+
+  .continue-climb-card,
+  .today-climb-card {
+    border-radius: 19px;
+  }
+
+  .continue-climb-card {
+    padding: 20px;
+  }
+
+  .continue-climb-copy h2 {
+    font-size: 2rem;
+  }
+
+  .continue-climb-resume {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .continue-climb-resume .continue-last-opened {
+    width: 100%;
+    margin-left: 50px;
+  }
+
+  .continue-climb-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .continue-climb-button {
+    width: 100%;
+  }
+
+  .today-climb-card {
+    padding: 20px;
+  }
+
+  .ascent-metrics {
+    grid-template-columns: repeat(3, minmax(0,1fr));
+  }
+
+  .ascent-metrics > div {
+    padding: 10px;
+  }
+
+  .learning-space-card {
+    padding: 17px;
+  }
+
+  .dashboard-principle {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 390px) {
+  .dashboard-welcome h1 {
+    font-size: 2.2rem;
+  }
+
+  .continue-climb-topline {
+    align-items: flex-start;
+  }
+
+  .ascent-metrics {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   Phase 1 / Package 3 — The Journey Map
+   ========================================================= */
+.journey-map-page { gap: 22px; }
+
+.journey-map-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 26px;
+  padding: 12px 2px 6px;
+}
+.journey-map-hero h1 {
+  margin: 7px 0 10px;
+  font-size: clamp(2.45rem, 5vw, 4.65rem);
+  line-height: .98;
+  letter-spacing: -.055em;
+}
+.journey-map-hero p {
+  max-width: 790px;
+  margin: 0;
+  color: #90aeb5;
+  line-height: 1.7;
+}
+.journey-map-summary {
+  min-width: 205px;
+  padding: 18px 20px;
+  border: 1px solid rgba(41,211,232,.16);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(14,39,47,.9), rgba(7,22,28,.9));
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  color: #58dfe8;
+}
+.journey-map-summary strong,
+.journey-map-summary span { display: block; }
+.journey-map-summary strong { color: #edfafd; font-size: 1.35rem; }
+.journey-map-summary span { color: #7899a1; font-size: .75rem; margin-top: 2px; }
+
+.journey-basecamp {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 24px;
+  border-radius: 22px;
+  border: 1px solid rgba(41,211,232,.21);
+  background:
+    radial-gradient(circle at 92% 18%, rgba(41,211,232,.12), transparent 34%),
+    linear-gradient(145deg, rgba(16,49,58,.96), rgba(8,27,34,.97));
+  box-shadow: 0 22px 55px rgba(0,0,0,.17);
+}
+.journey-basecamp-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 17px;
+  display: grid;
+  place-items: center;
+  color: #66e6ed;
+  background: rgba(41,211,232,.1);
+  border: 1px solid rgba(41,211,232,.18);
+}
+.journey-basecamp-copy h2 { margin: 5px 0 5px; font-size: 1.3rem; }
+.journey-basecamp-copy p { margin: 0; }
+.journey-basecamp-progress { max-width: 520px; margin-top: 14px; }
+.journey-basecamp-progress > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 7px;
+  font-size: .74rem;
+  color: #7899a1;
+}
+.journey-basecamp-progress strong { color: #72e9ef; }
+.journey-basecamp-action { white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; }
+
+.journey-roadmap-section,
+.journey-extensions-section {
+  padding: 26px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: linear-gradient(150deg, rgba(10,29,36,.95), rgba(6,20,26,.94));
+}
+.journey-section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 28px;
+  align-items: flex-end;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(255,255,255,.055);
+}
+.journey-section-heading.compact { align-items: flex-start; }
+.journey-section-heading h2 { margin: 5px 0 5px; font-size: 1.55rem; }
+.journey-section-heading p { max-width: 760px; margin: 0; }
+.journey-map-key { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px 16px; color: #76939a; font-size: .72rem; }
+.journey-map-key span { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.journey-map-key i { width: 8px; height: 8px; border-radius: 999px; background: #334850; }
+.journey-map-key i.complete { background: #6be4c4; }
+.journey-map-key i.current { background: #39d6e2; box-shadow: 0 0 12px rgba(57,214,226,.55); }
+
+.journey-roadmap { margin-top: 24px; }
+.journey-roadmap-row {
+  display: grid;
+  grid-template-columns: 54px minmax(0,1fr);
+  gap: 15px;
+  position: relative;
+}
+.journey-roadmap-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100%;
+}
+.journey-roadmap-marker {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  background: #10262e;
+  border: 1px solid #25434b;
+  color: #819da4;
+  font-size: .8rem;
+  font-weight: 900;
+}
+.journey-roadmap-line {
+  width: 1px;
+  min-height: 32px;
+  flex: 1 1 auto;
+  background: linear-gradient(180deg, #25434b, rgba(37,67,75,.15));
+}
+.journey-roadmap-row.current .journey-roadmap-marker {
+  color: #031316;
+  background: #43d9e4;
+  border-color: #65eaf0;
+  box-shadow: 0 0 24px rgba(52,210,222,.19);
+}
+.journey-roadmap-row.complete .journey-roadmap-marker {
+  color: #05221d;
+  background: #66dfbd;
+  border-color: #86e8ca;
+}
+.journey-roadmap-card {
+  margin-bottom: 16px;
+  padding: 20px 21px;
+  border: 1px solid rgba(255,255,255,.065);
+  border-radius: 18px;
+  background: rgba(255,255,255,.022);
+}
+.journey-roadmap-row.current .journey-roadmap-card {
+  border-color: rgba(41,211,232,.22);
+  background: linear-gradient(145deg, rgba(41,211,232,.075), rgba(255,255,255,.018));
+}
+.journey-roadmap-card-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.journey-roadmap-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .67rem;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: #6f8d94;
+}
+.journey-roadmap-status.current { color: #58e0e9; }
+.journey-roadmap-status.complete { color: #78e6c8; }
+.journey-module-reference {
+  color: #648087;
+  font-size: .68rem;
+  padding: 5px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.025);
+}
+.journey-roadmap-copy {
+  display: grid;
+  grid-template-columns: minmax(200px,.55fr) minmax(260px,1fr);
+  gap: 20px;
+  align-items: start;
+}
+.journey-roadmap-focus {
+  display: block;
+  color: #79a5ad;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  margin-bottom: 3px;
+}
+.journey-roadmap-copy h3 { margin: 0; font-size: 1.16rem; }
+.journey-roadmap-copy p { margin: 0; font-size: .84rem; line-height: 1.65; }
+.journey-roadmap-progress {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 12px;
+  align-items: center;
+  margin-top: 15px;
+}
+.journey-roadmap-progress span { color: #69dfe7; font-size: .72rem; font-weight: 800; }
+.journey-roadmap-lessons { display: grid; gap: 8px; margin-top: 15px; }
+.journey-roadmap-lesson {
+  display: grid;
+  grid-template-columns: 38px minmax(0,1fr) auto;
+  gap: 11px;
+  align-items: center;
+  padding: 11px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: rgba(255,255,255,.022);
+}
+.journey-roadmap-lesson:hover { border-color: rgba(41,211,232,.18); }
+.journey-roadmap-lesson strong,
+.journey-roadmap-lesson small { display: block; }
+.journey-roadmap-lesson strong { font-size: .84rem; }
+.journey-roadmap-lesson small { margin-top: 2px; font-size: .72rem; }
+.journey-roadmap-coming {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 10px 12px;
+  border-radius: 11px;
+  background: rgba(255,255,255,.018);
+  color: #718e95;
+  font-size: .74rem;
+}
+
+.journey-extension-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+.journey-extension-card {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr);
+  gap: 14px;
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.022);
+  border: 1px solid rgba(255,255,255,.055);
+}
+.journey-extension-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: #57dfe8;
+  background: rgba(41,211,232,.075);
+  border: 1px solid rgba(41,211,232,.13);
+}
+.journey-extension-card h3 { margin: 4px 0 5px; }
+.journey-extension-card p { margin: 0; font-size: .8rem; line-height: 1.6; }
+
+@media (max-width: 900px) {
+  .journey-map-hero,
+  .journey-section-heading { align-items: flex-start; flex-direction: column; }
+  .journey-map-summary { min-width: 0; width: 100%; }
+  .journey-map-key { justify-content: flex-start; }
+  .journey-basecamp { grid-template-columns: auto minmax(0,1fr); }
+  .journey-basecamp-action { grid-column: 1 / -1; justify-content: center; }
+  .journey-roadmap-copy { grid-template-columns: 1fr; gap: 8px; }
+}
+
+@media (max-width: 620px) {
+  .journey-roadmap-section,
+  .journey-extensions-section { padding: 18px 14px; border-radius: 18px; }
+  .journey-basecamp { grid-template-columns: 1fr; padding: 19px; }
+  .journey-basecamp-icon { width: 48px; height: 48px; }
+  .journey-roadmap-row { grid-template-columns: 39px minmax(0,1fr); gap: 9px; }
+  .journey-roadmap-marker { width: 34px; height: 34px; border-radius: 11px; font-size: .7rem; }
+  .journey-roadmap-card { padding: 16px; border-radius: 15px; }
+  .journey-roadmap-card-topline { align-items: flex-start; }
+  .journey-module-reference { white-space: nowrap; }
+  .journey-roadmap-lesson { grid-template-columns: 34px minmax(0,1fr) auto; }
+  .journey-extension-grid { grid-template-columns: 1fr; }
+  .journey-map-hero h1 { font-size: clamp(2.35rem, 14vw, 3.5rem); }
+}
+
+/* =========================================================
+   Ascend Audio 2.0A — transport controls + scrubbing
+   ========================================================= */
+.audio-scrubber-wrap {
+  display: grid;
+  align-items: center;
+}
+
+.audio-progress-scrubber {
+  width: 100%;
+  height: 28px;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+
+.audio-progress-scrubber::-webkit-slider-runnable-track {
+  height: 9px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--accent) 0%,
+    var(--accent-2) var(--audio-progress),
+    rgba(255,255,255,.065) var(--audio-progress),
+    rgba(255,255,255,.065) 100%
+  );
+}
+
+.audio-progress-scrubber::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  margin-top: -5.5px;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 3px solid #09222a;
+  border-radius: 50%;
+  background: #5ce7ef;
+  box-shadow: 0 3px 12px rgba(21,190,207,.35);
+}
+
+.audio-progress-scrubber::-moz-range-track {
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.065);
+}
+
+.audio-progress-scrubber::-moz-range-progress {
+  height: 9px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+.audio-progress-scrubber::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 3px solid #09222a;
+  border-radius: 50%;
+  background: #5ce7ef;
+  box-shadow: 0 3px 12px rgba(21,190,207,.35);
+}
+
+.audio-progress-scrubber:disabled {
+  opacity: .45;
+  cursor: default;
+}
+
+.audio-transport-controls {
+  gap: 20px;
+}
+
+.audio-seek-button {
+  position: relative;
+  width: 54px;
+  height: 54px;
+}
+
+.audio-seek-button > span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding-top: 1px;
+  font-size: .62rem;
+  font-weight: 900;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.audio-seek-button > svg {
+  opacity: .95;
+}
+
+.audio-control-button:disabled,
+.audio-text-action:disabled {
+  opacity: .35;
+  cursor: default;
+}
+
+.audio-secondary-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-top: -8px;
+}
+
+.audio-text-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 3px;
+  border: 0;
+  color: #88a5ac;
+  background: transparent;
+  cursor: pointer;
+  font-size: .74rem;
+  font-weight: 750;
+}
+
+.audio-text-action:not(:disabled):hover {
+  color: #7cebf1;
+}
+
+@media (max-width: 560px) {
+  .audio-transport-controls {
+    gap: 13px;
+  }
+
+  .audio-seek-button {
+    width: 50px;
+    height: 50px;
+  }
+
+  .audio-play-button {
+    min-width: 142px;
+  }
+
+  .audio-progress-labels {
+    gap: 8px;
+  }
+
+  .audio-progress-labels span:last-child {
+    text-align: right;
+  }
+}
+
+/* Package 07B — persistent curriculum navigation */
+.lesson-sequence-nav {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 14px;
+  align-items: stretch;
+  margin-top: 4px;
+}
+.lesson-sequence-button,
+.lesson-module-button {
+  border: 1px solid rgba(57, 171, 255, 0.28);
+  background: rgba(8, 31, 54, 0.82);
+  color: var(--text, #eef8ff);
+  border-radius: 16px;
+  cursor: pointer;
+}
+.lesson-sequence-button {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 16px 18px;
+  text-align: left;
+}
+.lesson-sequence-button.next { justify-content: flex-end; text-align: right; }
+.lesson-sequence-button span { min-width: 0; display: grid; gap: 4px; }
+.lesson-sequence-button small { color: #59d8ff; font-weight: 800; letter-spacing: .12em; font-size: .68rem; }
+.lesson-sequence-button strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lesson-module-button { padding: 12px 18px; color: #8edfff; font-weight: 800; }
+.lesson-sequence-button:hover,
+.lesson-module-button:hover { border-color: rgba(57, 171, 255, 0.62); background: rgba(10, 44, 76, 0.94); }
+@media (max-width: 760px) {
+  .lesson-sequence-nav { grid-template-columns: 1fr 1fr; }
+  .lesson-module-button { grid-column: 1 / -1; grid-row: 1; }
+  .lesson-sequence-spacer { display: none; }
+  .lesson-sequence-button { padding: 14px; }
+  .lesson-sequence-button strong { white-space: normal; font-size: .9rem; }
+}
+
+
+/* =========================================================
+   Package 07C — platform + color consistency polish
+   Keep the new Abstract A palette consistent across web,
+   iPhone and iPad. Native-only launch behavior lives in App.jsx.
+   ========================================================= */
+
+:root {
+  --bg: #06111f;
+  --surface: #0a1a2c;
+  --surface-2: #0d2239;
+  --border: rgba(100, 167, 230, 0.18);
+  --text: #f2f8ff;
+  --muted: #92a9bd;
+  --accent: #37c8ff;
+  --accent-2: #1677ee;
+}
+
+html,
+body {
+  background-color: var(--bg);
+}
+
+body {
+  background:
+    radial-gradient(circle at 80% -8%, rgba(55, 200, 255, 0.12), transparent 32%),
+    radial-gradient(circle at 18% 112%, rgba(22, 119, 238, 0.08), transparent 30%),
+    linear-gradient(180deg, #06111f 0%, #071525 48%, #050e19 100%);
+}
+
+.sidebar {
+  background: linear-gradient(180deg, rgba(6, 17, 31, 0.985), rgba(4, 13, 24, 0.985));
+}
+
+.topbar {
+  background: rgba(5, 16, 28, 0.94);
+}
+
+.panel,
+.module-card,
+.lesson-card,
+.journal-entry,
+.journal-form,
+.progress-card,
+.achievement-card {
+  background-color: var(--surface);
+}
+
+.mission-card {
+  background:
+    linear-gradient(150deg, rgba(55, 200, 255, 0.08), rgba(7, 20, 37, 0.34)),
+    #091a2c;
+}
+
+.stat-card {
+  background: linear-gradient(145deg, rgba(13, 34, 57, 0.97), rgba(7, 21, 37, 0.97));
+}
+
+.continue-panel {
+  background:
+    radial-gradient(circle at 86% 12%, rgba(55, 200, 255, 0.08), transparent 34%),
+    linear-gradient(145deg, rgba(12, 38, 61, 0.98), rgba(7, 24, 42, 0.99));
+}
+
+.today-climb-card {
+  background: linear-gradient(155deg, rgba(10, 29, 50, 0.99), rgba(6, 20, 35, 0.99));
+}
+
+.ascend-hero {
+  background:
+    linear-gradient(115deg, rgba(55, 200, 255, 0.09), transparent 46%),
+    linear-gradient(315deg, rgba(22, 119, 238, 0.08), transparent 42%),
+    linear-gradient(145deg, #0b2138, #071525 72%);
+}
+
+.brand-mark {
+  background: linear-gradient(145deg, rgba(55, 200, 255, 0.15), rgba(7, 25, 43, 0.9));
+  border-color: rgba(55, 200, 255, 0.27);
+}
+
+.nav-link.active::before {
+  background: #37c8ff;
+  box-shadow: 0 0 12px rgba(55, 200, 255, 0.62);
+}
+
+.nav-link:hover,
+.nav-link.active {
+  background: linear-gradient(90deg, rgba(55, 200, 255, 0.10), rgba(22, 119, 238, 0.035));
+}
+
+.primary-button {
+  background: linear-gradient(135deg, #42d5ff, #1888f2);
+  color: #04111d;
+  box-shadow: 0 12px 28px rgba(24, 136, 242, 0.22);
+}
+
+.progress-fill {
+  background: linear-gradient(90deg, #1888f2, #42d5ff);
+}
+
+.today-climb-icon,
+.workshop-preview-icon,
+.stat-icon,
+.achievement-icon {
+  background: linear-gradient(145deg, rgba(55, 200, 255, 0.13), rgba(22, 119, 238, 0.07));
+  color: #62dcff;
+}
+
+/* Explicitly keep the same surfaces at tablet/phone breakpoints. */
+@media (max-width: 820px) {
+  body {
+    background:
+      radial-gradient(circle at 86% -6%, rgba(55, 200, 255, 0.11), transparent 31%),
+      linear-gradient(180deg, #06111f 0%, #071525 52%, #050e19 100%);
+  }
+
+  .topbar {
+    background: rgba(5, 16, 28, 0.96);
+  }
+
+  .continue-panel {
+    background:
+      radial-gradient(circle at 88% 10%, rgba(55, 200, 255, 0.07), transparent 34%),
+      linear-gradient(145deg, rgba(12, 38, 61, 0.99), rgba(7, 24, 42, 0.99));
+  }
+
+  .today-climb-card {
+    background: linear-gradient(155deg, rgba(10, 29, 50, 0.99), rgba(6, 20, 35, 0.99));
+  }
+}
+
+/* =========================================================
+   Ascend UX Density Sprint — Package 08A
+   Desktop explores; native iPad/iPhone focuses.
+   ========================================================= */
+
+/* A calmer page-title scale everywhere. */
+.page-header h1 {
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  line-height: 1;
+  letter-spacing: -.04em;
+  margin-bottom: .65rem;
+}
+
+.page-header p {
+  max-width: 680px;
+  margin-bottom: 0;
+  line-height: 1.55;
+}
+
+/* Native-only density rules. The desktop/web experience stays expansive. */
+@media (max-width: 1180px) {
+  body.ascend-native .main-content {
+    padding-top: 22px;
+  }
+
+  body.ascend-native .page-stack {
+    gap: 16px;
+  }
+
+  body.ascend-native .page-header h1 {
+    font-size: clamp(2rem, 5.4vw, 2.75rem);
+  }
+
+  body.ascend-native .page-header p {
+    font-size: .94rem;
+  }
+
+  body.ascend-native .dashboard-welcome {
+    align-items: center;
+    padding-top: 2px;
+  }
+
+  body.ascend-native .dashboard-welcome h1 {
+    font-size: clamp(2.25rem, 6vw, 3.15rem);
+    margin-bottom: 8px;
+  }
+
+  body.ascend-native .dashboard-welcome p {
+    max-width: 620px;
+    font-size: .94rem;
+    line-height: 1.55;
+  }
+
+  body.ascend-native .dashboard-altitude {
+    min-width: 112px;
+    padding: 12px 14px;
+  }
+
+  body.ascend-native .dashboard-altitude span {
+    font-size: 1.5rem;
+  }
+
+  body.ascend-native .dashboard-primary-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  body.ascend-native .continue-climb-card {
+    padding: 24px;
+  }
+
+  body.ascend-native .continue-climb-copy {
+    margin-top: 13px;
+  }
+
+  body.ascend-native .continue-climb-copy h2 {
+    font-size: clamp(1.85rem, 4.5vw, 2.5rem);
+    margin-bottom: 8px;
+  }
+
+  body.ascend-native .continue-climb-copy p {
+    font-size: .94rem;
+    line-height: 1.55;
+  }
+
+  body.ascend-native .continue-climb-resume {
+    margin-top: 17px;
+  }
+
+  body.ascend-native .continue-climb-footer {
+    margin-top: 17px;
+  }
+
+  /* Today's Climb becomes a compact action strip on iPad rather than
+     another full dashboard competing with the current lesson. */
+  body.ascend-native .today-climb-card {
+    padding: 18px 20px;
+  }
+
+  body.ascend-native .today-climb-heading {
+    margin-bottom: 13px;
+  }
+
+  body.ascend-native .today-climb-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  body.ascend-native .today-climb-step {
+    min-height: 68px;
+    padding: 10px;
+  }
+
+  body.ascend-native .today-climb-step small {
+    display: none;
+  }
+
+  body.ascend-native .text-link-arrow {
+    margin-top: 12px;
+  }
+
+  body.ascend-native .dashboard-overview-grid,
+  body.ascend-native .learning-spaces-row {
+    gap: 14px;
+  }
+
+  body.ascend-native .panel {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  body.ascend-native .main-content {
+    padding-top: 14px;
+  }
+
+  body.ascend-native .page-stack {
+    gap: 13px;
+  }
+
+  body.ascend-native .page-header h1 {
+    font-size: 2rem;
+  }
+
+  body.ascend-native .page-header p {
+    font-size: .9rem;
+  }
+
+  body.ascend-native .dashboard-welcome h1 {
+    font-size: 2.15rem;
+    line-height: 1.02;
+  }
+
+  body.ascend-native .dashboard-welcome p {
+    font-size: .88rem;
+  }
+
+  body.ascend-native .continue-climb-card {
+    padding: 18px;
+  }
+
+  body.ascend-native .continue-climb-copy h2 {
+    font-size: 1.75rem;
+  }
+
+  body.ascend-native .continue-climb-copy p {
+    display: none;
+  }
+
+  body.ascend-native .continue-climb-resume {
+    margin-top: 14px;
+    padding: 11px 12px;
+  }
+
+  body.ascend-native .today-climb-card {
+    padding: 16px;
+  }
+
+  body.ascend-native .today-climb-list {
+    grid-template-columns: 1fr;
+  }
+
+  body.ascend-native .today-climb-step {
+    min-height: 0;
+  }
+
+  /* On iPhone the active action is the useful one; the rest can be
+     discovered inside the lesson rather than filling the home screen. */
+  body.ascend-native .today-climb-step:not(.active) {
+    display: none;
+  }
+
+  body.ascend-native .dashboard-overview-grid {
+    gap: 12px;
+  }
+
+  body.ascend-native .learning-spaces-row {
+    display: none;
+  }
+}
+
+/* =========================================================
+   Ascend UX Density Sprint — Package 08B
+   Native Lesson Focus
+   iPad = comfortable study; iPhone = action/audio-first.
+   ========================================================= */
+
+@media (max-width: 1180px) {
+  body.ascend-native .lesson-hero {
+    padding: 20px 22px;
+    gap: 18px;
+    align-items: flex-start;
+  }
+
+  body.ascend-native .lesson-hero h1 {
+    font-size: clamp(1.85rem, 4.4vw, 2.45rem);
+    line-height: 1.05;
+    margin: 8px 0 10px;
+  }
+
+  body.ascend-native .lesson-hero p {
+    max-width: 720px;
+    font-size: .93rem;
+    line-height: 1.55;
+  }
+
+  body.ascend-native .lesson-meta {
+    margin-top: 13px;
+    gap: 7px;
+  }
+
+  body.ascend-native .lesson-meta span,
+  body.ascend-native .status-pill {
+    padding: 5px 9px;
+    font-size: .72rem;
+  }
+
+  body.ascend-native .lesson-hero .complete-button {
+    min-height: 42px;
+    padding: 9px 13px;
+    flex: 0 0 auto;
+  }
+
+  body.ascend-native .tab-row {
+    gap: 5px;
+    padding: 5px;
+    border-radius: 12px;
+  }
+
+  body.ascend-native .tab-row button {
+    min-width: 0;
+    padding: 9px 12px;
+    font-size: .84rem;
+  }
+
+  body.ascend-native .lesson-content {
+    padding: 20px;
+    gap: 14px;
+  }
+
+  body.ascend-native .lesson-content-toolbar {
+    margin-bottom: 2px;
+  }
+
+  body.ascend-native .lesson-content-toolbar p {
+    font-size: .88rem;
+    line-height: 1.5;
+  }
+
+  body.ascend-native .lesson-content article {
+    padding-bottom: 17px;
+  }
+
+  body.ascend-native .lesson-content article h2 {
+    font-size: 1.12rem;
+    line-height: 1.25;
+  }
+
+  body.ascend-native .lesson-content article p {
+    font-size: .94rem;
+    line-height: 1.68;
+  }
+
+  body.ascend-native .lesson-learning-extras {
+    gap: 14px;
+  }
+
+  body.ascend-native .lesson-learning-block {
+    padding: 17px;
+  }
+
+  body.ascend-native .lesson-sequence-nav {
+    gap: 10px;
+  }
+
+  body.ascend-native .lesson-sequence-button {
+    min-height: 64px;
+    padding: 10px 12px;
+  }
+
+  body.ascend-native .lesson-sequence-button small {
+    font-size: .62rem;
+  }
+
+  body.ascend-native .lesson-sequence-button strong {
+    font-size: .82rem;
+  }
+
+  body.ascend-native .lesson-module-button {
+    min-height: 44px;
+    padding: 8px 12px;
+    font-size: .78rem;
+  }
+}
+
+@media (max-width: 600px) {
+  /* The iPhone lesson header should orient, not dominate. */
+  body.ascend-native .page-stack > .text-button:first-child {
+    font-size: .78rem;
+    padding-block: 2px;
+  }
+
+  body.ascend-native .lesson-hero {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  body.ascend-native .lesson-hero h1 {
+    font-size: 1.7rem;
+    line-height: 1.04;
+    margin: 6px 0 8px;
+  }
+
+  /* Once you're inside a lesson the full synopsis is secondary; the
+     active tab contains the material you actually came to use. */
+  body.ascend-native .lesson-hero p {
+    display: none;
+  }
+
+  body.ascend-native .lesson-meta {
+    margin-top: 10px;
+  }
+
+  body.ascend-native .lesson-meta span {
+    padding: 4px 8px;
+    font-size: .68rem;
+  }
+
+  body.ascend-native .lesson-hero .complete-button {
+    width: auto;
+    min-height: 38px;
+    padding: 8px 11px;
+    font-size: .78rem;
+  }
+
+  /* Keep the five learning modes available without turning them into a
+     second large navigation bar. */
+  body.ascend-native .tab-row {
+    margin-inline: 0;
+    padding: 4px;
+    gap: 3px;
+    overflow-x: auto;
+  }
+
+  body.ascend-native .tab-row button {
+    min-width: 66px;
+    padding: 8px 9px;
+    font-size: .75rem;
+  }
+
+  body.ascend-native .lesson-content {
+    padding: 15px;
+    gap: 12px;
+  }
+
+  body.ascend-native .lesson-content-toolbar {
+    gap: 8px;
+  }
+
+  body.ascend-native .lesson-content-toolbar p {
+    display: none;
+  }
+
+  body.ascend-native .lesson-content-toolbar .secondary-button {
+    width: auto;
+    min-height: 38px;
+    padding: 8px 10px;
+    font-size: .76rem;
+  }
+
+  body.ascend-native .lesson-content article h2 {
+    font-size: 1.04rem;
+  }
+
+  body.ascend-native .lesson-content article p {
+    font-size: .9rem;
+    line-height: 1.62;
+  }
+
+  body.ascend-native .lesson-learning-block {
+    padding: 14px;
+  }
+
+  body.ascend-native .lesson-learning-block-heading {
+    gap: 9px;
+  }
+
+  body.ascend-native .lesson-learning-block-heading h2 {
+    font-size: 1rem;
+  }
+
+  body.ascend-native .completion-banner {
+    padding: 15px;
+  }
+
+  body.ascend-native .completion-banner p {
+    margin-bottom: 10px;
+    font-size: .86rem;
+  }
+
+  body.ascend-native .completion-banner .primary-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Previous / next is the key mobile navigation. Stack it in reading
+     order and keep Modules as a compact escape hatch. */
+  body.ascend-native .lesson-sequence-nav {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  body.ascend-native .lesson-sequence-button {
+    min-width: 0;
+    min-height: 58px;
+  }
+
+  body.ascend-native .lesson-sequence-button strong {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  body.ascend-native .lesson-module-button {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    min-height: 38px;
+  }
+
+  body.ascend-native .lesson-sequence-spacer {
+    display: block;
+  }
+
+  /* Audio is the primary iPhone use case: reduce surrounding panel
+     padding so controls and progress appear sooner in the viewport. */
+  body.ascend-native .ascend-audio-player {
+    gap: 14px;
+  }
+
+  body.ascend-native .audio-now-reading {
+    padding: 12px;
+  }
+
+  body.ascend-native .audio-primary-controls {
+    gap: 10px;
+  }
+
+  body.ascend-native .audio-play-button {
+    min-width: 132px;
+    min-height: 52px;
+  }
+}
+
+
+/* =========================================================
+   Ascend UX Density Sprint — Package 08C
+   Native Modules + Dashboard secondary-density polish.
+   ========================================================= */
+@media (max-width: 1180px) {
+  body.ascend-native .dashboard-overview-grid { grid-template-columns: 1fr; }
+  body.ascend-native .dashboard-overview-grid > .panel:first-child { padding: 17px 20px; }
+  body.ascend-native .dashboard-overview-grid > .panel:first-child .compact-heading { margin-bottom: 10px; }
+  body.ascend-native .dashboard-overview-grid > .panel:first-child .progress-track { height: 7px; }
+  body.ascend-native .dashboard-overview-grid > .panel:first-child .ascent-metrics { margin-top: 12px; gap: 8px; }
+  body.ascend-native .dashboard-overview-grid > .panel:first-child .ascent-metrics > div { padding: 9px 11px; }
+  body.ascend-native .dashboard-overview-grid > .panel:first-child .ascent-metrics svg { width: 17px; height: 17px; margin-bottom: 5px; }
+  body.ascend-native .dashboard-overview-grid > .panel:first-child .ascent-metrics strong { font-size: .9rem; }
+  body.ascend-native .dashboard-overview-grid > .panel:first-child .current-module-row { margin-top: 11px; padding-top: 11px; }
+
+  body.ascend-native .module-list { gap: 12px; }
+  body.ascend-native .module-card {
+    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 14px; padding: 18px; border-radius: 17px;
+  }
+  body.ascend-native .module-number { font-size: 1.55rem; }
+  body.ascend-native .module-card-title { gap: 12px; }
+  body.ascend-native .module-card-title h2 { font-size: 1.12rem; line-height: 1.2; }
+  body.ascend-native .lesson-list { gap: 8px; margin-top: 14px; }
+  body.ascend-native .lesson-row { padding: 10px 11px; gap: 10px; }
+  body.ascend-native .lesson-check { width: 32px; height: 32px; }
+}
+@media (max-width: 600px) {
+  body.ascend-native .dashboard-overview-grid > .panel:first-child { padding: 15px; }
+  body.ascend-native .dashboard-overview-grid > .panel:first-child .ascent-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  body.ascend-native .dashboard-overview-grid > .panel:first-child .ascent-metrics > div { padding: 8px; }
+  body.ascend-native .dashboard-overview-grid > .panel:first-child .ascent-metrics svg { display: none; }
+  body.ascend-native .dashboard-overview-grid > .panel:first-child .current-module-row small { display: none; }
+  body.ascend-native .module-card { grid-template-columns: 1fr; padding: 14px; }
+  body.ascend-native .module-number { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; }
+  body.ascend-native .module-card-title h2 { font-size: 1.02rem; }
+  body.ascend-native .lesson-row { grid-template-columns: 34px minmax(0, 1fr) auto; padding: 9px; }
+}
+
+
+/* Package 09D — native secondary-page back control */
+.native-page-back {
+  display: none;
+}
+body.ascend-native .native-page-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: fit-content;
+  margin: 0 0 14px;
+  padding: 7px 10px;
+  border: 0;
+  color: var(--muted);
+  background: transparent;
+  font: inherit;
+  font-size: .86rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+body.ascend-native .native-page-back:active { color: var(--text); }
+@media (max-width:600px) {
+  body.ascend-native .native-page-back { margin-bottom:10px; padding-left:2px; }
+}

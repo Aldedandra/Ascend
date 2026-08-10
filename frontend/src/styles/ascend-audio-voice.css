@@ -120,3 +120,163 @@
   .elevenlabs-player .audio-secondary-actions{margin-top:7px}
   .elevenlabs-playback-settings{margin-top:10px}
 }
+
+
+/* =========================================================
+   Package 09F — iPhone Continue & Listen focus
+   Desktop and iPad retain their existing audio presentation.
+   ========================================================= */
+
+.elevenlabs-rate-pill {
+  margin-left: auto;
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  border: 1px solid rgba(86, 197, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(33, 113, 255, 0.07);
+  color: #a8d8ff;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+@media (max-width: 600px) {
+  body.ascend-native .elevenlabs-player {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  body.ascend-native .elevenlabs-player .ascend-audio-heading {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  body.ascend-native .elevenlabs-player .ascend-audio-heading h2 {
+    margin-top: 5px;
+    font-size: 1.28rem;
+    line-height: 1.16;
+  }
+
+  body.ascend-native .elevenlabs-player .audio-status {
+    padding: 6px 9px;
+    font-size: 0.68rem;
+  }
+
+  body.ascend-native .elevenlabs-now-playing {
+    margin-top: 2px;
+    padding: 10px 11px;
+    border-radius: 12px;
+  }
+
+  body.ascend-native .elevenlabs-now-playing > svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  body.ascend-native .elevenlabs-now-playing span:not(.elevenlabs-rate-pill) {
+    font-size: 0.68rem;
+  }
+
+  body.ascend-native .elevenlabs-now-playing strong {
+    font-size: 0.88rem;
+  }
+
+  body.ascend-native .audio-progress-wrap {
+    margin-top: 14px;
+  }
+
+  body.ascend-native .audio-progress-labels {
+    margin-bottom: 7px;
+    font-size: 0.76rem;
+  }
+
+  body.ascend-native .audio-primary-controls.audio-transport-controls {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr) 58px;
+    gap: 10px;
+    align-items: center;
+  }
+
+  body.ascend-native .audio-control-button.audio-seek-button {
+    width: 58px;
+    height: 58px;
+    min-width: 58px;
+    border-radius: 50%;
+  }
+
+  body.ascend-native .audio-control-button.audio-seek-button svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  body.ascend-native .audio-play-button {
+    min-height: 58px;
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 999px;
+    font-size: 1rem;
+  }
+
+  body.ascend-native .audio-play-button svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  body.ascend-native .audio-secondary-actions {
+    justify-content: center;
+    gap: 18px;
+  }
+
+  body.ascend-native .elevenlabs-playback-settings {
+    margin-top: 11px;
+    padding-top: 10px;
+  }
+
+  body.ascend-native .elevenlabs-playback-settings > summary {
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    font-size: 0.82rem;
+  }
+
+  body.ascend-native .elevenlabs-playback-settings .audio-narrator-panel {
+    padding: 12px;
+  }
+
+  body.ascend-native .elevenlabs-playback-settings .audio-narrator-copy {
+    display: none;
+  }
+
+  body.ascend-native .elevenlabs-playback-settings .audio-narrator-controls {
+    width: 100%;
+  }
+
+  body.ascend-native .elevenlabs-playback-settings .audio-narrator-controls select {
+    min-height: 44px;
+  }
+
+  body.ascend-native .elevenlabs-playback-settings .audio-speed-row {
+    margin-top: 12px;
+  }
+
+  body.ascend-native .elevenlabs-playback-settings .audio-speed-options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  body.ascend-native .elevenlabs-playback-settings .audio-speed-options button {
+    min-height: 38px;
+  }
+
+  body.ascend-native .audio-script-details {
+    margin-top: 10px;
+  }
+
+  body.ascend-native .audio-script-details > summary {
+    font-size: 0.8rem;
+  }
+
+  body.ascend-native .audio-note {
+    font-size: 0.74rem;
+  }
+}
