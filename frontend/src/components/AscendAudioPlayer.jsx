@@ -1,325 +1,481 @@
 import {
-  Headphones, LoaderCircle, Pause, Play, RotateCcw, RotateCw, Square, Mic2
+  Headphones,
+  Pause,
+  Play,
+  RotateCcw,
+  Square,
+  Volume2,
+  Mic2,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { api } from "../services/api";
+
 import "../styles/ascend-audio-voice.css";
 
-const SPEED_OPTIONS = [0.8, 0.9, 1, 1.15, 1.3, 1.5];
-const SEEK_SECONDS = 15;
-const NARRATOR_KEY = "ascend-elevenlabs-narrator";
-const RATE_KEY = "ascend-audio-playback-speed";
+import {
+  ascendSpeech,
+  getSpeechProviderLabel,
+  isSpeechAvailable,
+} from "../services/ascendSpeech";
+
+const SPEED_OPTIONS = [0.8, 1, 1.15, 1.3, 1.5];
+const WORDS_PER_MINUTE_AT_1X = 165;
+const VOICE_STORAGE_KEY = "ascend-audio-narrator";
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
-function formatClock(seconds) {
-  const safe = Math.max(0, Math.round(Number(seconds) || 0));
-  return `${Math.floor(safe / 60)}:${String(safe % 60).padStart(2, "0")}`;
+function estimateMinutes(text, rate) {
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / (WORDS_PER_MINUTE_AT_1X * rate)));
 }
 
-export default function AscendAudioPlayer({ lesson, onProgress }) {
-  const audioRef = useRef(null);
-  const storageKey = `ascend-elevenlabs-${lesson.id}`;
-  const [narratorId, setNarratorId] = useState(
-    () => localStorage.getItem(NARRATOR_KEY) || "bella"
+function curatedAppleVoices(voices = []) {
+  const english = voices.filter((voice) =>
+    String(voice.language || "").toLowerCase().startsWith("en")
   );
-  const [narrators, setNarrators] = useState([
-    { id: "bella", name: "Bella", description: "Clear & Professional" },
-    { id: "brian", name: "Brian", description: "Deep & Calm" },
-  ]);
+
+  const premium = english.filter((voice) =>
+    String(voice.quality || "").toLowerCase() === "premium"
+  );
+
+  const preferredNames = ["Ava", "Samantha", "Alex", "Evan", "Allison"];
+  const preferred = preferredNames
+    .map((name) => english.find((voice) =>
+      String(voice.name || "").toLowerCase() === name.toLowerCase()
+    ))
+    .filter(Boolean);
+
+  const pool = premium.length ? premium : preferred.length ? preferred : english;
+
+  return [...pool]
+    .sort((left, right) => {
+      const leftPreferred = preferredNames.findIndex(
+        (name) => name.toLowerCase() === String(left.name || "").toLowerCase()
+      );
+      const rightPreferred = preferredNames.findIndex(
+        (name) => name.toLowerCase() === String(right.name || "").toLowerCase()
+      );
+      const leftRank = leftPreferred === -1 ? 999 : leftPreferred;
+      const rightRank = rightPreferred === -1 ? 999 : rightPreferred;
+      return leftRank - rightRank || String(left.name).localeCompare(String(right.name));
+    })
+    .slice(0, 8);
+}
+
+export default function AscendAudioPlayer({ lesson }) {
+  const storageKey = `ascend-audio-${lesson.id}`;
+  const [status, setStatus] = useState("idle");
   const [rate, setRate] = useState(() => {
-    const stored = Number(localStorage.getItem(RATE_KEY));
-    return SPEED_OPTIONS.includes(stored) ? stored : 0.8;
+    const stored = Number(localStorage.getItem(`${storageKey}-rate`));
+    return SPEED_OPTIONS.includes(stored) ? stored : 1;
   });
-  const [audioUrl, setAudioUrl] = useState("");
-  const [status, setStatus] = useState("loading");
-  const [duration, setDuration] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [scrubTime, setScrubTime] = useState(null);
+  const [characterIndex, setCharacterIndex] = useState(() => {
+    const stored = Number(localStorage.getItem(`${storageKey}-position`));
+    return Number.isFinite(stored) ? stored : 0;
+  });
   const [error, setError] = useState("");
-  const [generationNote, setGenerationNote] = useState("");
+  const [voices, setVoices] = useState([]);
+  const [selectedVoiceId, setSelectedVoiceId] = useState(
+    () => localStorage.getItem(VOICE_STORAGE_KEY) || ""
+  );
+  const [voicesLoading, setVoicesLoading] = useState(true);
+  const [previewingVoice, setPreviewingVoice] = useState(false);
+  const playbackStartIndex = useRef(characterIndex);
 
-  const displayTime = scrubTime ?? currentTime;
-  const progress = duration ? clamp((displayTime / duration) * 100, 0, 100) : 0;
-  const selectedNarrator = useMemo(
-    () => narrators.find((n) => n.id === narratorId) || narrators[0],
-    [narratorId, narrators]
+  const script = lesson.audio_script || "";
+  const speechAvailable = isSpeechAvailable();
+  const providerLabel = getSpeechProviderLabel();
+  const progress = script.length
+    ? clamp((characterIndex / script.length) * 100, 0, 100)
+    : 0;
+  const remainingText = useMemo(
+    () => script.slice(clamp(characterIndex, 0, script.length)),
+    [characterIndex, script]
+  );
+  const estimatedMinutes = useMemo(
+    () => estimateMinutes(remainingText || script, rate),
+    [remainingText, rate, script]
   );
 
-  useEffect(() => {
-    api.getAscendNarrators()
-      .then((data) => data?.narrators?.length && setNarrators(data.narrators))
-      .catch(() => {});
-  }, []);
 
   useEffect(() => {
+    if (!speechAvailable) {
+      setVoicesLoading(false);
+      return undefined;
+    }
+
     let cancelled = false;
-    const prepare = async () => {
-      setStatus("loading");
-      setError("");
-      setGenerationNote("");
-      setAudioUrl("");
-      try {
-        const state = await api.getElevenLabsLessonAudioStatus(lesson.id, narratorId);
-        let metadata = state.metadata;
-        if (!state.ready) {
-          setStatus("generating");
-          setGenerationNote(
-            `${selectedNarrator?.name || "Ascend"} is preparing this lesson for the first time.`
-          );
-          metadata = await api.prepareElevenLabsLessonAudio(lesson.id, narratorId);
-        }
+
+    ascendSpeech.getVoices()
+      .then(({ voices: availableVoices = [] }) => {
         if (cancelled) return;
-        setGenerationNote(
-          metadata?.cached === false
-            ? `Generated once with ${metadata.narrator_name || selectedNarrator?.name}. Future plays use the cached audio.`
-            : ""
-        );
-        setAudioUrl(api.getElevenLabsLessonAudioUrl(lesson.id, narratorId));
-        setStatus("ready");
-      } catch (err) {
+
+        const curatedVoices = curatedAppleVoices(availableVoices);
+        setVoices(curatedVoices);
+        setSelectedVoiceId((currentVoiceId) => {
+          if (curatedVoices.some((voice) => voice.identifier === currentVoiceId)) {
+            return currentVoiceId;
+          }
+
+          const preferredDefault =
+            curatedVoices.find((voice) => voice.name.toLowerCase() === "ava")
+            || curatedVoices.find((voice) => voice.name.toLowerCase() === "samantha")
+            || curatedVoices.find((voice) => voice.name.toLowerCase() === "alex");
+          const premiumVoice = curatedVoices.find((voice) =>
+            voice.quality.toLowerCase() === "premium"
+          );
+          const bestAvailable = preferredDefault || premiumVoice || curatedVoices[0];
+          const nextId = bestAvailable?.identifier || "";
+
+          if (nextId) {
+            localStorage.setItem(VOICE_STORAGE_KEY, nextId);
+          }
+
+          return nextId;
+        });
+      })
+      .catch((voiceError) => {
         if (!cancelled) {
-          setStatus("error");
-          setError(err?.message || "Unable to prepare ElevenLabs narration.");
+          setError(voiceError?.message || "Unable to load installed voices.");
         }
-      }
-    };
-    prepare();
+      })
+      .finally(() => {
+        if (!cancelled) setVoicesLoading(false);
+      });
+
     return () => {
       cancelled = true;
-      audioRef.current?.pause();
     };
-  }, [lesson.id, narratorId]);
+  }, [speechAvailable]);
 
   useEffect(() => {
-    localStorage.setItem(NARRATOR_KEY, narratorId);
-  }, [narratorId]);
-
-  useEffect(() => {
-    localStorage.setItem(RATE_KEY, String(rate));
-    if (audioRef.current) audioRef.current.playbackRate = rate;
-  }, [rate]);
-
-  const restorePosition = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.playbackRate = rate;
-    const stored = Number(localStorage.getItem(`${storageKey}-${narratorId}-seconds`));
-    if (Number.isFinite(stored) && stored > 0 && stored < audio.duration - 2) {
-      audio.currentTime = stored;
-      setCurrentTime(stored);
+    if (selectedVoiceId) {
+      localStorage.setItem(VOICE_STORAGE_KEY, selectedVoiceId);
     }
-    setDuration(Number.isFinite(audio.duration) ? audio.duration : 0);
-  };
+  }, [selectedVoiceId]);
 
-  const saveProgress = (seconds) => {
-    localStorage.setItem(`${storageKey}-${narratorId}-seconds`, String(seconds));
-    const pct = duration ? clamp((seconds / duration) * 100, 0, 100) : 0;
-    onProgress?.({ position: seconds, progress: pct });
+  useEffect(() => {
+    localStorage.setItem(`${storageKey}-rate`, String(rate));
+  }, [rate, storageKey]);
+
+  useEffect(() => {
+    localStorage.setItem(`${storageKey}-position`, String(characterIndex));
+  }, [characterIndex, storageKey]);
+
+  useEffect(() => {
+    setStatus("idle");
+    setError("");
+  }, [lesson.id]);
+
+  useEffect(() => {
+    if (!speechAvailable) {
+      return undefined;
+    }
+
+    let stateHandle;
+    let progressHandle;
+    let errorHandle;
+    let disposed = false;
+
+    Promise.all([
+      ascendSpeech.addListener("speechStateChanged", ({ state }) => {
+        if (disposed) return;
+        setStatus(state === "completed" ? "completed" : state);
+        if (state === "completed") {
+          setCharacterIndex(script.length);
+        }
+      }),
+      ascendSpeech.addListener("speechProgress", ({ characterOffset }) => {
+        if (disposed) return;
+        setCharacterIndex(
+          clamp(
+            playbackStartIndex.current + Number(characterOffset || 0),
+            0,
+            script.length
+          )
+        );
+      }),
+      ascendSpeech.addListener("speechError", ({ message }) => {
+        if (disposed) return;
+        setError(message || "Narration stopped unexpectedly.");
+      }),
+    ]).then(([stateListener, progressListener, errorListener]) => {
+      stateHandle = stateListener;
+      progressHandle = progressListener;
+      errorHandle = errorListener;
+    });
+
+    return () => {
+      disposed = true;
+      stateHandle?.remove();
+      progressHandle?.remove();
+      errorHandle?.remove();
+      ascendSpeech.stop().catch(() => {});
+    };
+  }, [lesson.id, script.length, speechAvailable]);
+
+  const startSpeaking = async ({ restart = false } = {}) => {
+    if (!speechAvailable) {
+      setError("Narration is not supported by this browser or device.");
+      return;
+    }
+
+    const startIndex = restart ? 0 : characterIndex;
+    const text = script.slice(startIndex);
+
+    if (!text.trim()) {
+      setCharacterIndex(0);
+      await startSpeaking({ restart: true });
+      return;
+    }
+
+    try {
+      setError("");
+      playbackStartIndex.current = startIndex;
+      if (restart) {
+        setCharacterIndex(0);
+      }
+      await ascendSpeech.speak({
+        text,
+        rate,
+        title: lesson.title,
+        lessonId: lesson.id,
+        voiceIdentifier: selectedVoiceId,
+      });
+    } catch (speechError) {
+      setError(speechError?.message || "Unable to start narration.");
+    }
   };
 
   const togglePlayback = async () => {
-    const audio = audioRef.current;
-    if (!audio || !audioUrl) return;
-    setError("");
     try {
-      if (!audio.paused) {
-        audio.pause();
-        setStatus("paused");
+      setError("");
+      if (status === "speaking") {
+        await ascendSpeech.pause();
+      } else if (status === "paused") {
+        await ascendSpeech.resume();
       } else {
-        if (audio.ended) audio.currentTime = 0;
-        audio.playbackRate = rate;
-        await audio.play();
-        setStatus("playing");
+        await startSpeaking({ restart: status === "completed" });
       }
-    } catch (err) {
-      setError(err?.message || "Unable to start playback.");
+    } catch (speechError) {
+      setError(speechError?.message || "Unable to control narration.");
     }
   };
 
-  const seekBy = (seconds) => {
-    const audio = audioRef.current;
-    if (!audio || !duration) return;
-    audio.currentTime = clamp(audio.currentTime + seconds, 0, duration);
-    setCurrentTime(audio.currentTime);
-    saveProgress(audio.currentTime);
+  const stopPlayback = async () => {
+    try {
+      await ascendSpeech.stop();
+      setStatus("idle");
+    } catch (speechError) {
+      setError(speechError?.message || "Unable to stop narration.");
+    }
   };
 
-  const commitScrub = (value) => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    const next = clamp(Number(value), 0, duration || 0);
-    audio.currentTime = next;
-    setCurrentTime(next);
-    setScrubTime(null);
-    saveProgress(next);
+  const restartPlayback = async () => {
+    await ascendSpeech.stop().catch(() => {});
+    await startSpeaking({ restart: true });
   };
 
-  const restart = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.currentTime = 0;
-    setCurrentTime(0);
-    saveProgress(0);
+  const handleRateChange = async (nextRate) => {
+    setRate(nextRate);
+    if (status === "speaking" || status === "paused") {
+      await ascendSpeech.stop().catch(() => {});
+      setStatus("idle");
+      setError("Speed updated. Tap Listen to continue from your saved position.");
+    }
   };
 
-  const stop = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.pause();
-    setStatus("ready");
+  const handleVoiceChange = async (event) => {
+    const nextVoiceId = event.target.value;
+
+    if (status === "speaking" || status === "paused") {
+      await ascendSpeech.stop().catch(() => {});
+      setStatus("idle");
+    }
+
+    setSelectedVoiceId(nextVoiceId);
+    setError("");
   };
 
-  const changeNarrator = (event) => {
-    audioRef.current?.pause();
-    setCurrentTime(0);
-    setDuration(0);
-    setNarratorId(event.target.value);
+  const previewSelectedVoice = async () => {
+    if (!selectedVoiceId) {
+      setError("Choose a narrator before previewing a voice.");
+      return;
+    }
+
+    try {
+      setError("");
+      setPreviewingVoice(true);
+      await ascendSpeech.stop().catch(() => {});
+      setStatus("idle");
+      await ascendSpeech.previewVoice({
+        voiceIdentifier: selectedVoiceId,
+        rate,
+        text: "Welcome to Ascend. Your next lesson is ready. Keep climbing.",
+      });
+    } catch (previewError) {
+      setError(previewError?.message || "Unable to preview this narrator.");
+    } finally {
+      window.setTimeout(() => setPreviewingVoice(false), 1200);
+    }
   };
 
-  const busy = status === "loading" || status === "generating";
-  const statusLabel =
-    status === "playing" ? "Playing" :
-    status === "paused" ? "Paused" :
-    status === "generating" ? "Preparing" :
-    status === "loading" ? "Loading" :
-    status === "error" ? "Unavailable" : "Ready";
+  const selectedVoice = voices.find((voice) => voice.identifier === selectedVoiceId);
+
+  const statusLabel = status === "speaking"
+    ? "Playing"
+    : status === "paused"
+      ? "Paused"
+      : status === "completed"
+        ? "Completed"
+        : "Ready";
 
   return (
-    <section className="panel ascend-audio-player elevenlabs-player">
+    <section className="panel ascend-audio-player">
       <div className="panel-heading ascend-audio-heading">
         <div>
-          <span className="eyebrow">ASCEND AUDIO · ELEVENLABS</span>
-          <h2><Headphones size={22} />{lesson.title}</h2>
+          <span className="eyebrow">ASCEND AUDIO</span>
+          <h2>
+            <Headphones size={22} />
+            {lesson.title}
+          </h2>
         </div>
-        <span className={`audio-status audio-status-${status}`}>{statusLabel}</span>
+        <span className={`audio-status audio-status-${status}`}>
+          {statusLabel}
+        </span>
       </div>
 
-      <div className="audio-now-reading elevenlabs-now-playing">
-        <Mic2 size={20} />
+      <div className="audio-now-reading">
+        <Volume2 size={20} />
         <div>
-          <span>Ascend narrator</span>
-          <strong>{selectedNarrator?.name} · {selectedNarrator?.description}</strong>
+          <span>{providerLabel}</span>
+          <strong>
+            {characterIndex > 0 && status !== "completed"
+              ? "Continue where you left off"
+              : status === "completed"
+                ? "Lesson listening complete"
+                : "Start this lesson"}
+          </strong>
         </div>
       </div>
 
-      {busy ? (
-        <div className="elevenlabs-preparing">
-          <LoaderCircle className="voice-spin" size={20} />
+      <div className="audio-progress-wrap">
+        <div className="audio-progress-labels">
+          <span>{Math.round(progress)}% listened</span>
+          <span>About {estimatedMinutes} min remaining</span>
+        </div>
+        <div className="audio-progress-track" aria-label="Listening progress">
+          <div className="audio-progress-fill" style={{ width: `${progress}%` }} />
+        </div>
+      </div>
+
+      <div className="audio-primary-controls">
+        <button
+          className="audio-control-button secondary"
+          onClick={restartPlayback}
+          title="Restart lesson"
+          disabled={!speechAvailable}
+        >
+          <RotateCcw size={20} />
+        </button>
+        <button
+          className="audio-play-button"
+          onClick={togglePlayback}
+          disabled={!speechAvailable}
+        >
+          {status === "speaking" ? <Pause size={28} /> : <Play size={28} fill="currentColor" />}
+          <span>
+            {status === "speaking"
+              ? "Pause"
+              : status === "paused"
+                ? "Resume"
+                : status === "completed"
+                  ? "Listen again"
+                  : characterIndex > 0
+                    ? "Continue"
+                    : "Listen"}
+          </span>
+        </button>
+        <button
+          className="audio-control-button secondary"
+          onClick={stopPlayback}
+          title="Stop narration"
+          disabled={!speechAvailable}
+        >
+          <Square size={18} fill="currentColor" />
+        </button>
+      </div>
+
+      <div className="audio-narrator-panel">
+        <div className="audio-narrator-copy">
+          <Mic2 size={20} />
           <div>
-            <strong>{status === "generating" ? "Generating lesson audio…" : "Loading audio…"}</strong>
-            <span>{generationNote || "Checking Ascend's audio cache."}</span>
+            <span>Narrator</span>
+            <strong>
+              {selectedVoice
+                ? `${selectedVoice.name} · ${selectedVoice.quality}`
+                : voicesLoading
+                  ? "Loading installed voices..."
+                  : "Choose a voice"}
+            </strong>
           </div>
         </div>
-      ) : (
-        <>
-          <audio
-            ref={audioRef}
-            src={audioUrl}
-            preload="metadata"
-            onLoadedMetadata={restorePosition}
-            onTimeUpdate={(event) => {
-              const seconds = event.currentTarget.currentTime;
-              setCurrentTime(seconds);
-              saveProgress(seconds);
-            }}
-            onPlay={() => setStatus("playing")}
-            onPause={() => {
-              if (!audioRef.current?.ended && status === "playing") setStatus("paused");
-            }}
-            onEnded={() => {
-              setStatus("ready");
-              setCurrentTime(duration);
-              saveProgress(duration);
-            }}
-            onError={() => setError("The generated lesson audio could not be loaded.")}
-          />
 
-          <div className="audio-progress-wrap">
-            <div className="audio-progress-labels">
-              <span>{formatClock(displayTime)} · {Math.round(progress)}%</span>
-              <span>-{formatClock(Math.max(0, duration - displayTime))}</span>
-            </div>
-            <div className="audio-scrubber-wrap">
-              <input
-                className="audio-progress-scrubber"
-                type="range"
-                min="0"
-                max={duration || 1}
-                step="0.1"
-                value={displayTime}
-                onChange={(e) => setScrubTime(Number(e.target.value))}
-                onPointerUp={(e) => commitScrub(e.currentTarget.value)}
-                onKeyUp={(e) => {
-                  if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) {
-                    commitScrub(e.currentTarget.value);
-                  }
-                }}
-                onBlur={(e) => scrubTime !== null && commitScrub(e.currentTarget.value)}
-                style={{ "--audio-progress": `${progress}%` }}
-              />
-            </div>
-          </div>
+        <div className="audio-narrator-controls">
+          <label>
+            <span className="sr-only">Choose narrator</span>
+            <select
+              value={selectedVoiceId}
+              onChange={handleVoiceChange}
+              disabled={voicesLoading || !voices.length}
+            >
+              {!voices.length && <option value="">No voices found</option>}
+              {voices.map((voice) => (
+                <option key={voice.identifier} value={voice.identifier}>
+                  {voice.name} — {voice.quality} ({voice.language})
+                </option>
+              ))}
+            </select>
+          </label>
 
-          <div className="audio-primary-controls audio-transport-controls">
-            <button className="audio-control-button audio-seek-button" onClick={() => seekBy(-SEEK_SECONDS)} disabled={!currentTime}>
-              <RotateCcw size={24}/><span>{SEEK_SECONDS}</span>
-            </button>
-            <button className="audio-play-button" onClick={togglePlayback} disabled={!audioUrl}>
-              {status === "playing" ? <Pause size={28}/> : <Play size={28} fill="currentColor"/>}
-              <span>{status === "playing" ? "Pause" : currentTime > 0 ? "Continue" : "Listen"}</span>
-            </button>
-            <button className="audio-control-button audio-seek-button" onClick={() => seekBy(SEEK_SECONDS)} disabled={!duration || currentTime >= duration}>
-              <RotateCw size={24}/><span>{SEEK_SECONDS}</span>
-            </button>
-          </div>
+          <button
+            className="secondary-button audio-preview-button"
+            onClick={previewSelectedVoice}
+            disabled={!selectedVoiceId || previewingVoice}
+          >
+            <Volume2 size={17} />
+            {previewingVoice ? "Previewing..." : "Preview voice"}
+          </button>
+        </div>
+      </div>
 
-          <div className="audio-secondary-actions">
-            <button className="audio-text-action" onClick={stop}><Square size={14} fill="currentColor"/>Stop</button>
-            <button className="audio-text-action" onClick={restart}><RotateCcw size={15}/>Start over</button>
-          </div>
-        </>
+      <div className="audio-speed-row">
+        <span>Playback speed</span>
+        <div className="audio-speed-options">
+          {SPEED_OPTIONS.map((option) => (
+            <button
+              key={option}
+              className={rate === option ? "active" : ""}
+              onClick={() => handleRateChange(option)}
+            >
+              {option}×
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {!speechAvailable && (
+        <p className="audio-note">
+          Narration is unavailable in this browser. Open Ascend in a supported browser or the native iPhone app.
+        </p>
       )}
 
-      <details className="elevenlabs-playback-settings">
-        <summary>Playback settings</summary>
-        <div className="audio-narrator-panel">
-          <div className="audio-narrator-copy">
-            <Mic2 size={20}/>
-            <div><span>Narrator</span><strong>{selectedNarrator?.name} · {selectedNarrator?.description}</strong></div>
-          </div>
-          <div className="audio-narrator-controls">
-            <label>
-              <span className="sr-only">Choose narrator</span>
-              <select value={narratorId} onChange={changeNarrator}>
-                {narrators.map((n) => (
-                  <option key={n.id} value={n.id}>{n.name} — {n.description}</option>
-                ))}
-              </select>
-            </label>
-          </div>
-        </div>
-
-        <div className="audio-speed-row">
-          <span>Playback speed</span>
-          <div className="audio-speed-options">
-            {SPEED_OPTIONS.map((option) => (
-              <button key={option} className={rate === option ? "active" : ""} onClick={() => setRate(option)}>
-                {option}×
-              </button>
-            ))}
-          </div>
-        </div>
-      </details>
-
-      {generationNote && !busy ? <p className="audio-note">{generationNote}</p> : null}
-      {error ? <div className="audio-player-message">{error}</div> : null}
+      {error && <div className="audio-player-message">{error}</div>}
 
       <details className="audio-script-details">
         <summary>View narration script</summary>
-        <div className="audio-script">{lesson.audio_script || ""}</div>
+        <div className="audio-script">{remainingText || script}</div>
       </details>
     </section>
   );
