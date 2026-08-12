@@ -4,6 +4,7 @@ Lesson content is imported from focused lesson modules while the API-facing
 MODULES structure remains unchanged.
 """
 from .module0 import LESSONS as MODULE_0_LESSONS
+from .module1 import LESSONS as MODULE_1_LESSONS
 
 MODULE_DEFINITIONS = [{'id': 'module-0',
   'number': 0,
@@ -14,7 +15,7 @@ MODULE_DEFINITIONS = [{'id': 'module-0',
   'number': 1,
   'title': 'Git and Collaborative Source Control',
   'subtitle': 'Repositories, commits, branches, merges, pull requests, tags, and recovery.',
-  'status': 'locked'},
+  'status': 'active'},
  {'id': 'module-2',
   'number': 2,
   'title': 'Linux and the Command Line',
@@ -64,7 +65,7 @@ MODULE_DEFINITIONS = [{'id': 'module-0',
 
 MODULES = [
     {**MODULE_DEFINITIONS[0], "lessons": MODULE_0_LESSONS},
-    {**MODULE_DEFINITIONS[1], "lessons": []},
+    {**MODULE_DEFINITIONS[1], "lessons": MODULE_1_LESSONS},
     {**MODULE_DEFINITIONS[2], "lessons": []},
     {**MODULE_DEFINITIONS[3], "lessons": []},
     {**MODULE_DEFINITIONS[4], "lessons": []},

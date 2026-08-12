@@ -25,6 +25,7 @@ const VOICE_STORAGE_KEY = "ascend-audio-narrator";
 
 const GOLD_MASTER_LESSONS = new Set([
   "0-1", "0-2", "0-3", "0-4", "0-5", "0-6", "0-7",
+  "1-1", "1-2",
 ]);
 
 function clamp(value, min, max) {
@@ -77,7 +78,8 @@ function curatedAppleVoices(voices = []) {
 function GoldMasterPlayer({ lesson, onProgress }) {
   const audioRef = useRef(null);
   const storageKey = `ascend-gold-master-${lesson.id}`;
-  const audioUrl = `/audio/module0/${lesson.id}.wav`;
+  const moduleNumber = String(lesson.id).split("-")[0];
+  const audioUrl = `/audio/module${moduleNumber}/${lesson.id}.wav`;
 
   const [status, setStatus] = useState("loading");
   const [rate, setRate] = useState(() => {
