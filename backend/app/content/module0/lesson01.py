@@ -6,7 +6,7 @@ LESSON = {'id': '0-1',
             'changes.',
  'duration_minutes': 50,
  'xp': 50,
- 'audio_script': 'Welcome to The Journey, and welcome to Lesson 0.1: How Engineers Think.\n'
+ 'audio_script': 'Welcome to Ascend, and welcome to Lesson 0.1: How Engineers Think.\n'
                  '\n'
                  'Imagine that it is the middle of a normal workday when a message arrives: “Forge is down.” '
                  'That sentence sounds useful, but it is not yet a diagnosis. It may not even describe the '
@@ -179,7 +179,7 @@ LESSON = {'id': '0-1',
                  'compared local and remote behavior. Even though the issue was frustrating, the process was '
                  'engineering: test the path, locate boundaries, and eliminate possibilities.\n'
                  '\n'
-                 'These examples matter because they show that you are not beginning at zero. The Journey is '
+                 'These examples matter because they show that you are not beginning at zero. Ascend is '
                  'going to formalize habits you already use, strengthen the weak spots, and apply the same '
                  'reasoning to increasingly complex systems.\n'
                  '\n'
@@ -235,7 +235,7 @@ LESSON = {'id': '0-1',
                  '\n'
                  'As you move into the lab, your job is not to fix the scenario immediately. Your job is to '
                  'make the problem smaller, build a map, and design an investigation that produces reliable '
-                 'evidence. That is how The Journey begins.',
+                 'evidence. That is how Ascend begins.',
  'content': [{'heading': 'Why this lesson matters',
               'body': 'Tools change constantly, but disciplined engineering habits remain useful across '
                       'support, software, infrastructure, cloud, and DevOps. Your first responsibility is '
