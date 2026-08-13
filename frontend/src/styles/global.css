@@ -223,6 +223,24 @@ small { color: var(--muted); }
 .module-number { font-size: 2.2rem; font-weight: 900; color: rgba(127,176,255,.62); }
 .module-card-title { display: flex; justify-content: space-between; gap: 20px; }
 .module-card-title h2 { font-size: 1.28rem; }
+.module-card-actions { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+.module-collapse-button {
+  width: 34px; height: 34px; padding: 0; border-radius: 10px;
+  display: grid; place-items: center; cursor: pointer;
+  color: var(--text); background: transparent; border: 1px solid transparent;
+  transition: background .16s ease, border-color .16s ease, color .16s ease;
+}
+.module-collapse-button:hover {
+  background: rgba(41,211,232,.08);
+  border-color: rgba(41,211,232,.18);
+  color: #a8f4f7;
+}
+.module-collapse-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.module-card.collapsed { align-items: start; }
+.module-card.collapsed .module-card-content > p { margin-bottom: 0; }
 .lesson-row {
   display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 12px;
   padding: 13px; border-radius: 13px; background: rgba(255,255,255,.025);
@@ -3014,6 +3032,8 @@ body {
   }
   body.ascend-native .module-number { font-size: 1.55rem; }
   body.ascend-native .module-card-title { gap: 12px; }
+  body.ascend-native .module-card-actions { gap: 5px; }
+  body.ascend-native .module-collapse-button { width: 30px; height: 30px; border-radius: 9px; }
   body.ascend-native .module-card-title h2 { font-size: 1.12rem; line-height: 1.2; }
   body.ascend-native .lesson-list { gap: 8px; margin-top: 14px; }
   body.ascend-native .lesson-row { padding: 10px 11px; gap: 10px; }

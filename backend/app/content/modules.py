@@ -5,6 +5,7 @@ MODULES structure remains unchanged.
 """
 from .module0 import LESSONS as MODULE_0_LESSONS
 from .module1 import LESSONS as MODULE_1_LESSONS
+from .module2 import LESSONS as MODULE_2_LESSONS
 
 MODULE_DEFINITIONS = [{'id': 'module-0',
   'number': 0,
@@ -20,7 +21,7 @@ MODULE_DEFINITIONS = [{'id': 'module-0',
   'number': 2,
   'title': 'Linux and the Command Line',
   'subtitle': 'Filesystems, users, permissions, processes, services, logs, SSH, and shell fundamentals.',
-  'status': 'locked'},
+  'status': 'active'},
  {'id': 'module-3',
   'number': 3,
   'title': 'Networking and Web Fundamentals',
@@ -66,7 +67,7 @@ MODULE_DEFINITIONS = [{'id': 'module-0',
 MODULES = [
     {**MODULE_DEFINITIONS[0], "lessons": MODULE_0_LESSONS},
     {**MODULE_DEFINITIONS[1], "lessons": MODULE_1_LESSONS},
-    {**MODULE_DEFINITIONS[2], "lessons": []},
+    {**MODULE_DEFINITIONS[2], "lessons": MODULE_2_LESSONS},
     {**MODULE_DEFINITIONS[3], "lessons": []},
     {**MODULE_DEFINITIONS[4], "lessons": []},
     {**MODULE_DEFINITIONS[5], "lessons": []},

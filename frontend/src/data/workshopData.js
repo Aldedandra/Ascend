@@ -390,6 +390,340 @@ export const WORKSHOP_SESSIONS = [
       },
     ],
   },
+  {
+    id: "2026-08-05-ecs-security-storage",
+    number: 3,
+    date: "August 5, 2026",
+    duration: "34 min",
+    title: "ECS Security, Volumes, and Persistent Storage",
+    summary:
+      "Followed a real AWS security finding through ECS task definitions, read-only root filesystems, ephemeral volumes, and EFS-backed persistent storage.",
+    status: "Complete",
+    topics: ["Amazon ECS", "AWS Config", "DevSecOps", "EFS", "Ephemeral volumes", "Task definitions", "CloudWatch"],
+    relatedLessons: ["Module 4 — Docker and Containers", "Module 6 — AWS and Cloud Fundamentals", "Module 7 — Infrastructure as Code"],
+    overview: [
+      {
+        heading: "Session objective",
+        body:
+          "Use a real security task from the DevOps queue to understand how container security controls, writable storage, and ECS task definitions fit together in a production environment.",
+      },
+      {
+        heading: "What happened",
+        body:
+          "Travis opened an AWS security finding showing ECS task definitions that were not compliant with a read-only root-filesystem control. He traced the finding through AWS Config, entered running ECS containers, and explained how writable paths must be deliberately provided through volumes when the root filesystem is locked down.",
+      },
+      {
+        heading: "The central lesson",
+        body:
+          "Containers should be treated as replaceable runtime environments. Persistent business data belongs outside the container, while temporary writable paths should be narrowly scoped. Security improves when a workload can write only where it genuinely needs to.",
+      },
+    ],
+    keyConcepts: [
+      {
+        term: "AWS Config",
+        definition:
+          "An AWS service used here to evaluate resources against configuration and compliance rules and surface findings that the DevOps team reviews.",
+      },
+      {
+        term: "DevSecOps",
+        definition:
+          "Security work integrated into development and operations. Travis explained that the DevOps team handles this work because there is not a separate DevSecOps function for these findings.",
+      },
+      {
+        term: "Read-only root filesystem",
+        definition:
+          "An ECS container setting that prevents writes to the container root filesystem. Required writable locations are then explicitly mounted instead of leaving the entire filesystem writable.",
+      },
+      {
+        term: "Ephemeral volume",
+        definition:
+          "Temporary writable storage associated with the life of an ECS task. It can support paths needed while the task runs, but it should not be treated as durable business storage.",
+      },
+      {
+        term: "Amazon EFS",
+        definition:
+          "Persistent shared file storage that multiple ECS tasks can attach to. The workshop used it to explain data that must remain available even when containers stop and restart.",
+      },
+      {
+        term: "Task definition",
+        definition:
+          "The ECS configuration that describes containers and runtime settings such as environment variables, secrets references, volumes, and filesystem behavior.",
+      },
+      {
+        term: "CloudWatch agent",
+        definition:
+          "A component that needs specific writable directories so it can collect and send logs while the rest of the container root filesystem remains read-only.",
+      },
+    ],
+    commands: [
+      {
+        label: "Read-only root filesystem setting",
+        command: '"readonlyRootFilesystem": true',
+        explanation:
+          "The ECS container-definition setting highlighted by the security control. Writable locations must then be explicitly provided where required.",
+      },
+      {
+        label: "Inspect a mounted path",
+        command: "cd /var/www/echo/shared",
+        explanation:
+          "The workshop navigated into an EFS-backed shared directory to illustrate storage that survives container replacement.",
+      },
+      {
+        label: "Temporary writable path example",
+        command: "/tmp",
+        explanation:
+          "A temporary path can be backed by an ephemeral volume when an application needs scratch space but the root filesystem should stay read-only.",
+      },
+    ],
+    notes: [
+      "The DevOps team reviews recurring AWS security findings and prioritizes higher-impact issues rather than treating cloud security as a one-time setup task.",
+      "A read-only root filesystem reduces the places an attacker could write scripts or modify files if a container were compromised.",
+      "Writable exceptions should be deliberate and container-specific rather than granting write access everywhere.",
+      "Ephemeral storage disappears with the task; EFS is used when data must survive task replacement or be shared by multiple tasks.",
+      "Separating Sidekick and Clockwork into ECS services preserved independent scaling while shared storage reproduced behavior they previously had on one machine.",
+      "Secrets in the task definition point to a secure store rather than being placed directly into plain-text configuration.",
+    ],
+    lab: {
+      title: "Classify container storage by lifetime and purpose",
+      objective:
+        "Practice deciding what should remain immutable, what may be written temporarily, and what must persist independently of a container.",
+      prerequisites: [
+        "A containerized test application or architecture diagram",
+        "Basic understanding of Docker containers and ECS tasks",
+        "No production changes are required",
+      ],
+      steps: [
+        "Choose one containerized application and list every path or category of data it may write.",
+        "Classify each write as temporary, log/agent-related, or persistent business data.",
+        "Mark the container root filesystem read-only in your design and identify only the paths that genuinely require write access.",
+        "Assign temporary paths to ephemeral storage and persistent/shared paths to a durable storage service such as EFS where appropriate.",
+        "Draw the lifecycle for a task replacement and show which data disappears and which data remains.",
+        "Explain how the design reduces the impact of a compromised container.",
+        "Write three checks you would perform if the application failed after enabling a read-only root filesystem.",
+      ],
+      evidence: [
+        "Storage classification table",
+        "Container → volume → persistent-storage diagram",
+        "A short explanation of why container filesystems should not be the source of truth for durable data",
+        "Three troubleshooting checks",
+      ],
+    },
+    reviewQuestions: [
+      "Why does a read-only root filesystem improve container security?",
+      "What is the practical difference between an ephemeral volume and EFS?",
+      "Why might two separate ECS services still need shared storage?",
+      "What does an ECS task definition control?",
+      "If a container is replaced, which kinds of data should be expected to survive?",
+    ],
+    questionsForTravis: [
+      "Are our ECS task definitions generated from Terraform, application repositories, or both?",
+      "How do we test a read-only root-filesystem change before promoting it to production?",
+      "What other AWS Config findings tend to create the most valuable DevOps security projects?",
+      "How do we decide between EFS, EBS, S3, or a database for persistent application data?",
+      "Can we walk through how secrets referenced by an ECS task definition are stored and injected?",
+    ],
+    actionItems: [
+      "Review the difference between container-local, ephemeral, and persistent storage.",
+      "Identify one application you run locally and decide which of its files should survive container replacement.",
+      "Practice reading a simple ECS task-definition JSON document and locate volumes, mounts, environment variables, and secrets references.",
+      "Add read-only-root-filesystem security to the container-hardening study notes in Ascend.",
+    ],
+    handbookEntries: [
+      {
+        title: "Container storage lifetime",
+        category: "Containers",
+        summary: "Container filesystem = replaceable; ephemeral volume = task lifetime; EFS = durable shared storage.",
+      },
+      {
+        title: "Read-only root filesystem",
+        category: "Security",
+        summary: "Lock the root filesystem and explicitly mount only the paths that truly require write access.",
+      },
+      {
+        title: "ECS task definition",
+        category: "AWS",
+        summary: "Describes how ECS should run containers, including images, configuration, secrets references, volumes, and security settings.",
+      },
+    ],
+  },
+  {
+    id: "2026-08-13-lambda-eventbridge",
+    number: 4,
+    date: "August 13, 2026",
+    duration: "29 min",
+    title: "AWS Lambda, EventBridge, and Serverless Automation",
+    summary:
+      "Explored Lambda hands-on, traced a scheduled EventBridge trigger into a Python cost-saving function, reviewed CloudWatch monitoring, and connected serverless automation to regions, permissions, configuration, and reusable code.",
+    status: "Complete",
+    topics: ["AWS Lambda", "EventBridge", "Serverless", "Cron", "CloudWatch", "IAM", "Environment variables", "AWS regions"],
+    relatedLessons: ["Module 3 — Networking and Web Fundamentals", "Module 6 — AWS and Cloud Fundamentals", "Module 7 — Infrastructure as Code"],
+    overview: [
+      {
+        heading: "Session objective",
+        body:
+          "Understand what AWS Lambda is, create or inspect a function in the AWS console, and follow a real automation from its EventBridge schedule through Python execution and CloudWatch observability.",
+      },
+      {
+        heading: "What happened",
+        body:
+          "You shared your screen and navigated Lambda in the AWS development account. After reviewing function creation and runtimes, the group inspected an existing cost-saver function that automatically stops and starts development resources. The session followed its EventBridge schedule, Python code, exclusion tags, monitoring metrics, CloudWatch logs, timeout settings, and environment variables.",
+      },
+      {
+        heading: "The central lesson",
+        body:
+          "Serverless automation is event-driven code. Instead of keeping a server or container running continuously, Lambda starts when an event invokes it, performs a focused job, records what happened, and then stops. The trigger, permissions, configuration, and logs are just as important as the code itself.",
+      },
+    ],
+    keyConcepts: [
+      {
+        term: "AWS Lambda",
+        definition:
+          "Serverless compute for running focused code in response to an invocation. AWS supplies the runtime environment so a dedicated EC2 instance or continuously running container is not required for the function itself.",
+      },
+      {
+        term: "Event payload",
+        definition:
+          "Data passed into a Lambda invocation. The function can inspect keys and values in the event and choose behavior based on what it receives.",
+      },
+      {
+        term: "Amazon EventBridge",
+        definition:
+          "The event and scheduling layer shown in the workshop. Events or schedules can invoke a Lambda when a defined condition occurs.",
+      },
+      {
+        term: "Cron schedule",
+        definition:
+          "A time-based expression used by the demonstrated EventBridge rules to determine when the cost-saving Lambda should run.",
+      },
+      {
+        term: "Region-bound resource",
+        definition:
+          "Lambda functions are scoped to an AWS region. Switching from Northern Virginia to Oregon exposed a different set of functions in the console.",
+      },
+      {
+        term: "CloudWatch logs and monitoring",
+        definition:
+          "Lambda metrics show invocations and duration, while CloudWatch logs preserve application output that engineers can inspect after a run or failure.",
+      },
+      {
+        term: "Environment variable",
+        definition:
+          "Configuration supplied separately from code so the same function can target different environments or resources without changing the implementation.",
+      },
+      {
+        term: "Timeout",
+        definition:
+          "The maximum amount of time a Lambda invocation may run before AWS stops it. Travis emphasized shorter values for request-driven work and longer values only when the job actually needs them.",
+      },
+    ],
+    commands: [
+      {
+        label: "Read a Lambda environment variable in Python",
+        command: 'os.getenv("<VARIABLE_NAME>")',
+        explanation:
+          "The pattern discussed for reading configuration from the Lambda environment instead of hard-coding environment-specific values.",
+        warning: "Do not use plain environment variables as a place to store secrets unless your organization explicitly provides a secure pattern for doing so.",
+      },
+      {
+        label: "Event payload shape",
+        command: '{ "key": "value" }',
+        explanation:
+          "The Lambda test view can provide JSON input to a function. The function may read keys from that event and branch based on the received data.",
+      },
+      {
+        label: "Scheduled invocation pattern",
+        command: "EventBridge schedule → Lambda → AWS resources → CloudWatch",
+        explanation:
+          "The cost-saver workflow demonstrated in the session: a schedule invokes code, the code changes resource state, and logs/metrics provide evidence of the run.",
+      },
+    ],
+    notes: [
+      "Lambda was introduced as a good fit for focused tasks that run on demand or on a schedule rather than requiring an always-on server or container.",
+      "The console showed that Lambda functions are region-bound; the same AWS account can display different functions when the selected region changes.",
+      "The cost-saver automation uses EventBridge schedules to invoke Python that stops development resources after hours and starts them again before developers return.",
+      "An exclusion tag allows selected ECS resources to stay running instead of being stopped by the automation.",
+      "The start workflow restores the prior ECS task count using saved parameters so environments return to their previous state.",
+      "CloudWatch logs were emphasized as essential evidence for understanding what a previous invocation actually did.",
+      "IAM permissions affected what could be created or viewed during the hands-on walkthrough, reinforcing that access is part of cloud architecture and troubleshooting.",
+      "Environment variables make code reusable across environments, but Travis explicitly warned against putting secrets directly into ordinary environment variables.",
+      "The session ended with a preview of a higher-volume Lambda/Kinesis workflow that continuously processes CloudWatch/RDS data and sends it to Splunk; Travis plans to explain it in a future workshop.",
+    ],
+    lab: {
+      title: "Design a safe scheduled Lambda automation",
+      objective:
+        "Model the trigger → function → resource → logs workflow from the workshop without making destructive changes to company AWS resources.",
+      prerequisites: [
+        "Basic Python familiarity",
+        "Understanding of AWS regions and IAM permissions",
+        "A local editor; AWS development read access is optional",
+      ],
+      steps: [
+        "Draw the cost-saver flow demonstrated in the workshop: EventBridge schedule → Lambda → resource decision → CloudWatch logs.",
+        "Write a local Python function that receives a small JSON-like event and prints which action it would take. Do not make AWS API calls yet.",
+        "Add an EXCLUDED flag or tag value to the sample input and make the function skip that resource when the exclusion is present.",
+        "Move one non-secret value, such as ENVIRONMENT, out of the code and read it with os.getenv().",
+        "Add useful log output for start, decision, skipped resource, successful action, and error paths.",
+        "Choose a hypothetical EventBridge schedule and describe it in plain English. You do not need to create the rule in AWS.",
+        "Explain what IAM permissions the real function would require and why least privilege matters.",
+        "Describe how you would verify a successful run using Lambda Monitor and CloudWatch logs.",
+        "Explain when this workload is a better fit for Lambda than for an always-running ECS service.",
+      ],
+      evidence: [
+        "Trigger-to-observability architecture diagram",
+        "Local Python function or pseudocode",
+        "Example input event and expected output",
+        "A short IAM/least-privilege explanation",
+        "Lambda-vs-ECS decision explanation",
+      ],
+    },
+    reviewQuestions: [
+      "What makes Lambda serverless from the application team's point of view?",
+      "What invokes the cost-saver Lambda demonstrated in the workshop?",
+      "Why did changing AWS regions change the Lambda functions visible in the console?",
+      "What is the difference between a trigger, an event payload, and the Lambda code itself?",
+      "Why are CloudWatch logs important even when a Lambda normally runs successfully?",
+      "How do environment variables make a function more reusable?",
+      "Why might an ECS service be excluded from the automatic stop/start workflow?",
+    ],
+    questionsForTravis: [
+      "Can we walk through how our Lambda IAM execution roles are built and how permissions are kept least-privilege?",
+      "Where are secrets stored for Lambda if ordinary environment variables should not contain them?",
+      "Are our EventBridge schedules and Lambda functions managed through Terraform, GitLab pipelines, or directly in AWS?",
+      "How does the cost-saver function persist and restore the previous ECS desired task count?",
+      "What alarms do we use for Lambda failures, throttling, or unexpected duration increases?",
+      "When does our team choose Lambda instead of ECS/Fargate for new backend or automation work?",
+      "Can we continue with the Kinesis Data Streams and Splunk Lambda example you previewed at the end of this session?",
+    ],
+    actionItems: [
+      "Practice reading and writing small Python functions that accept an event payload.",
+      "Review EventBridge scheduling and learn how cron expressions map to human-readable schedules.",
+      "Review one non-destructive Lambda in the development account and identify its trigger, runtime, timeout, environment variables, IAM role, metrics, and logs.",
+      "Add Lambda vs ECS to the Ascend handbook as a workload-selection comparison.",
+      "Prepare questions about the Kinesis/Splunk example for the next session.",
+    ],
+    handbookEntries: [
+      {
+        title: "Serverless automation loop",
+        category: "AWS",
+        summary: "Event or schedule → Lambda invocation → focused action → CloudWatch evidence.",
+      },
+      {
+        title: "Lambda configuration vs code",
+        category: "Automation",
+        summary: "Keep reusable logic in code and environment-specific non-secret values in configuration rather than hard-coding them.",
+      },
+      {
+        title: "Lambda observability",
+        category: "Monitoring",
+        summary: "Use invocation/duration metrics plus CloudWatch logs to prove what ran, when it ran, and what happened.",
+      },
+      {
+        title: "AWS resources are regional",
+        category: "Cloud fundamentals",
+        summary: "Always verify the selected AWS region before assuming a resource is missing or before making changes.",
+      },
+    ],
+  },
 ];
 
 export const WORKSHOP_LABS = WORKSHOP_SESSIONS.map((session) => ({
