@@ -28,6 +28,14 @@ export default function ContinueLearningCard({ lesson, session }) {
     ? describeLastOpened(session.lastOpenedAt)
     : "Your next lesson";
   const resumeLabel = TAB_LABELS[activeTab] || "Lesson";
+
+  const resumeDetail =
+  activeTab === "audio" && audioProgress > 0
+    ? `${audioProgress}% listened`
+    : activeTab === "lesson"
+      ? "In progress"
+        : resumeLabel;
+  
   const actionLabel = savedLesson
     ? RESUME_ACTIONS[activeTab] || "Resume learning"
     : "Start lesson";
@@ -51,8 +59,9 @@ export default function ContinueLearningCard({ lesson, session }) {
             {activeTab === "audio" ? <Headphones size={22} /> : <BookOpen size={22} />}
           </span>
           <div>
+          <div>
             <small>Resume from</small>
-            <strong>{resumeLabel}</strong>
+            <strong>{resumeDetail}</strong>
           </div>
           <span className="continue-last-opened">
             <Clock3 size={14} /> {lastOpened}

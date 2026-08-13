@@ -114,6 +114,34 @@ function GoldMasterPlayer({ lesson, onProgress }) {
     audioRef.current?.pause();
   }, []);
 
+  // Publish rich metadata for iOS/iPadOS Lock Screen, Control Center, and
+  // compatible in-car media surfaces when Gold Master WAV narration is used.
+  // The native AscendSpeech plugin publishes its own metadata for Apple TTS,
+  // but Gold Master lessons play through this HTMLAudioElement instead.
+  useEffect(() => {
+    if (!("mediaSession" in navigator) || typeof MediaMetadata === "undefined") {
+      return;
+    }
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: lesson.title,
+      artist: `Ascend • Module ${moduleNumber}`,
+      album: "Ascend Learning",
+      artwork: [
+        { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
+        { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
+        { src: "/icon-1024.png", sizes: "1024x1024", type: "image/png" },
+      ],
+    });
+
+    return () => {
+      // Only clear metadata if this lesson still owns the active media session.
+      if (navigator.mediaSession?.metadata?.title === lesson.title) {
+        navigator.mediaSession.metadata = null;
+      }
+    };
+  }, [lesson.id, lesson.title, moduleNumber]);
+
   const saveProgress = (seconds, knownDuration = duration) => {
     localStorage.setItem(`${storageKey}-seconds`, String(seconds));
     const pct = knownDuration
