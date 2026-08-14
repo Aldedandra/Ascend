@@ -11,6 +11,7 @@ import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
+  ArrowUp,
 } from "lucide-react";
 import {
   useEffect,
@@ -800,6 +801,18 @@ export default function Lesson() {
           </article>
         </section>
       )}
+
+      <div className="lesson-back-to-top-row">
+        <button
+          className="lesson-back-to-top"
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          aria-label="Back to top"
+        >
+          <ArrowUp size={18} />
+          <span>Back to top</span>
+        </button>
+      </div>
 
       <nav className="lesson-sequence-nav" aria-label="Lesson navigation">
         {lessonNavigation.previous ? (

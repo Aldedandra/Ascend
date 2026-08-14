@@ -3075,3 +3075,45 @@ body.ascend-native .native-page-back:active { color: var(--text); }
 @media (max-width:600px) {
   body.ascend-native .native-page-back { margin-bottom:10px; padding-left:2px; }
 }
+
+
+/* Lesson Back to Top — package */
+.lesson-back-to-top-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.lesson-back-to-top {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid rgba(57, 171, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(8, 31, 54, 0.82);
+  color: #8edfff;
+  font-weight: 800;
+  cursor: pointer;
+  transition: border-color .16s ease, background .16s ease, transform .16s ease;
+}
+
+.lesson-back-to-top:hover {
+  border-color: rgba(57, 171, 255, 0.62);
+  background: rgba(10, 44, 76, 0.94);
+  transform: translateY(-1px);
+}
+
+.lesson-back-to-top:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  .lesson-back-to-top {
+    width: 100%;
+    border-radius: 14px;
+  }
+}
